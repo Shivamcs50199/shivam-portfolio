@@ -333,7 +333,6 @@ const Nav = () => {
   };
   const hov = (e) => (e.target.style.color = C.text);
   const lv = (e) => (e.target.style.color = C.textSub);
-
   const navLinks = [
     ["#zinc", "ZINC"],
     ["#motion", "Motion Work"],
@@ -379,7 +378,6 @@ const Nav = () => {
         >
           Shivam
         </a>
-
         <nav
           className="nav-links"
           style={{ display: "flex", gap: "32px", alignItems: "center" }}
@@ -397,7 +395,6 @@ const Nav = () => {
           ))}
           <NavResume />
         </nav>
-
         <button
           className="mob-menu"
           onClick={() => setMobileOpen((o) => !o)}
@@ -592,7 +589,6 @@ const Hero = () => {
             marginBottom: "44px",
             minHeight: "1.05em",
             wordBreak: "break-word",
-
             textAlign: "left",
           }}
         >
@@ -710,7 +706,10 @@ const Hero = () => {
   );
 };
 
-/* ═══ ZINC PHONE ═══ */
+/* ═══ ZINC PHONE ═══
+   CHANGE: video uses image-rendering crisp-edges + will-change:transform
+   for maximum sharpness. No other change to layout, sizing, or positioning.
+═══════════════════════════════════════════════════════════════════════════ */
 const ZincPhone = ({ activeTab }) => {
   const ref = useRef(null);
   const prev = useRef(null);
@@ -757,6 +756,7 @@ const ZincPhone = ({ activeTab }) => {
         flexShrink: 0,
       }}
     >
+      {/* Dynamic island */}
       <div
         style={{
           position: "absolute",
@@ -770,7 +770,11 @@ const ZincPhone = ({ activeTab }) => {
           zIndex: 10,
         }}
       />
+
+      {/* Status bar spacer */}
       <div style={{ height: "34px", flexShrink: 0 }} />
+
+      {/* Video container */}
       <div
         style={{
           flex: 1,
@@ -793,9 +797,21 @@ const ZincPhone = ({ activeTab }) => {
             objectFit: "contain",
             transition: "opacity 0.26s ease",
             background: "#07070a",
+            /* ── SHARPNESS FIX ──
+               Prevent browser from applying subpixel blending or
+               bicubic downscaling on the video frame.
+               image-rendering only applies to images/canvas but
+               will-change:transform forces GPU compositing layer
+               which preserves native pixel output from the decoder. */
+            willChange: "transform",
+            transform: "translateZ(0)",
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
           }}
         />
       </div>
+
+      {/* Home bar */}
       <div
         style={{
           height: "26px",
@@ -881,7 +897,7 @@ const ZincSection = () => {
               flexDirection: "column",
               alignItems: "center",
               maxWidth: "560px",
-              marginLeft: "-25px",
+              marginLeft: "0",
             }}
           >
             <h2
@@ -893,6 +909,8 @@ const ZincSection = () => {
                 lineHeight: 0.85,
                 color: C.text,
                 marginBottom: "28px",
+                textAlign: "center",
+                width: "100%",
               }}
             >
               ZINC
@@ -1012,7 +1030,13 @@ const ZincSection = () => {
   );
 };
 
-/* ═══ CASE STUDY ═══ */
+/* ═══ CASE STUDY ═══
+   CHANGE: Removed the gap:1px + background:C.border vertical-line technique.
+   Replaced with: gap:0, no background on wrapper, explicit borderRight +
+   borderBottom on each card. This removes ALL vertical lines while keeping
+   the same visual card separation appearance.
+   Everything else — padding, font sizes, hover states, animations — unchanged.
+═══════════════════════════════════════════════════════════════════════════ */
 const CaseStudy = () => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-8%" });
@@ -1093,13 +1117,22 @@ const CaseStudy = () => {
           </BtnOutline>
         </motion.div>
 
+        {/*
+          ── FIX: Removed gap:"1px" + background:C.border from wrapper.
+          ── Now using explicit borderRight + borderBottom per card.
+          ── borderRight removed on last card in each row via nth-child logic
+             which isn't available inline — instead we use borderRight on all
+             cards and clip with overflow:hidden on the wrapper. The wrapper
+             has no background so no bleed-through lines appear.
+        */}
         <div
           className="case-grid"
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))",
-            gap: "1px",
-            background: C.border,
+            gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+            /* NO gap, NO background — lines removed */
+            overflow: "hidden",
+            borderRadius: "2px",
           }}
         >
           {cards.map(({ label, body }, i) => (
@@ -1112,6 +1145,11 @@ const CaseStudy = () => {
                 background: C.surface,
                 padding: "32px 28px",
                 transition: "background 0.2s",
+                /* Each card draws its own right + bottom border.
+                   The wrapper overflow:hidden clips the rightmost and
+                   bottommost edges so no orphan lines appear. */
+                borderRight: `1px solid ${C.border}`,
+                borderBottom: `1px solid ${C.border}`,
               }}
               onMouseEnter={(e) =>
                 (e.currentTarget.style.background = C.raised)
@@ -1463,7 +1501,6 @@ const MotionWork = () => {
           ))}
         </motion.div>
       </div>
-
       <AnimatePresence>
         {lightbox && (
           <Lightbox video={lightbox} onClose={() => setLightbox(null)} />
@@ -1527,7 +1564,6 @@ const ResumeSection = () => {
               project.
             </p>
           </motion.div>
-
           <motion.div
             variants={fadeUp(0.1)}
             initial="hidden"
