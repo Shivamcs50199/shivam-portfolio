@@ -1086,7 +1086,7 @@ const CaseStudy = () => {
           animate={inView ? "visible" : "hidden"}
           style={{
             display: "flex",
-            justifyContent: "space-between",
+            justifyContent: window.innerWidth <= 768 ? "center" : "space-between",
             alignItems: "flex-start",
             marginBottom: "48px",
             flexWrap: "wrap",
@@ -1456,7 +1456,7 @@ const MotionWork = () => {
           animate={inView ? "visible" : "hidden"}
           style={{
             display: "flex",
-            justifyContent: "space-between",
+            justifyContent: window.innerWidth <= 768 ? "center" : "space-between",
             alignItems: "flex-start",
             marginBottom: "48px",
             flexWrap: "wrap",
