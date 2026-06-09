@@ -507,7 +507,7 @@ const Hero = () => {
   const typed = useTypewriter([
     "Design Systems.",
     "Digital Products.",
-    "UX Engineering.",
+    "Product Engineering.",
   ]);
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
@@ -620,9 +620,10 @@ const Hero = () => {
           Design Engineer with 7 years of experience across motion design, UX,
           and frontend development. I design and build digital products where
           interaction, motion, and usability work together to create meaningful
-          user experiences. Recently shipped{" "}
+          user experiences. Recently launched{" "}
           <span style={{ color: C.text, fontWeight: 500 }}>ZINC</span>, a React
-          Native fintech application built from concept to production.
+          Native fintech application built from concept to production. Currently
+          under Play Store review.
         </motion.p>
 
         <motion.div
@@ -1109,7 +1110,7 @@ const CaseStudy = () => {
             </h2>
           </div>
           <BtnOutline
-            href="https://www.notion.so/Case-Study-Zinc-3726a866524e808797b8de851bd64974"
+            href="https://positive-relation-d99.notion.site/Case-Study-Zinc-3726a866524e808797b8de851bd64974"
             target="_blank"
             style={{ alignSelf: "flex-start" }}
           >
@@ -1824,7 +1825,7 @@ const Contact = () => {
             Shivam Kumar · Design Engineer · Bangalore · 2025
           </span>
           <a
-            href="https://www.notion.so/Privacy-Policy-3776a866524e80ff92b7ce6226087d60"
+            href="https://positive-relation-d99.notion.site/Privacy-Policy-3776a866524e80ff92b7ce6226087d60?pvs=73"
             target="_blank"
             rel="noopener noreferrer"
             style={{
