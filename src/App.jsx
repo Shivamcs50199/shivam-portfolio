@@ -707,10 +707,7 @@ const Hero = () => {
   );
 };
 
-/* ═══ ZINC PHONE ═══
-   CHANGE: video uses image-rendering crisp-edges + will-change:transform
-   for maximum sharpness. No other change to layout, sizing, or positioning.
-═══════════════════════════════════════════════════════════════════════════ */
+/* ═══ ZINC PHONE ═══ */
 const ZincPhone = ({ activeTab }) => {
   const ref = useRef(null);
   const prev = useRef(null);
@@ -798,12 +795,6 @@ const ZincPhone = ({ activeTab }) => {
             objectFit: "contain",
             transition: "opacity 0.26s ease",
             background: "#07070a",
-            /* ── SHARPNESS FIX ──
-               Prevent browser from applying subpixel blending or
-               bicubic downscaling on the video frame.
-               image-rendering only applies to images/canvas but
-               will-change:transform forces GPU compositing layer
-               which preserves native pixel output from the decoder. */
             willChange: "transform",
             transform: "translateZ(0)",
             backfaceVisibility: "hidden",
@@ -1031,13 +1022,326 @@ const ZincSection = () => {
   );
 };
 
-/* ═══ CASE STUDY ═══
-   CHANGE: Removed the gap:1px + background:C.border vertical-line technique.
-   Replaced with: gap:0, no background on wrapper, explicit borderRight +
-   borderBottom on each card. This removes ALL vertical lines while keeping
-   the same visual card separation appearance.
-   Everything else — padding, font sizes, hover states, animations — unchanged.
-═══════════════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════════════
+   ONBOARDING PHONE — same shell as ZincPhone, single video src
+   Drop /videos/Onboarding.mp4 into your public folder and it will
+   auto-play inside the phone frame automatically.
+═══════════════════════════════════════════════════════════════════════ */
+const OnboardingPhone = ({ activeTab }) => {
+  const ref = useRef(null);
+  const prev = useRef(null);
+  const srcs = {
+    welcome: "/videos/Welcome.mp4",
+    setup: "/videos/Setup.mp4",
+    verify: "/videos/Verify.mp4",
+  };
+
+  useEffect(() => {
+    if (!ref.current) return;
+    ref.current.src = srcs[activeTab];
+    ref.current.play().catch(() => {});
+    prev.current = activeTab;
+  }, []);
+
+  useEffect(() => {
+    if (!ref.current || prev.current === activeTab) return;
+    prev.current = activeTab;
+    const v = ref.current;
+    v.style.opacity = "0";
+    setTimeout(() => {
+      v.src = srcs[activeTab];
+      v.load();
+      v.play().catch(() => {});
+      v.style.opacity = "1";
+    }, 260);
+  }, [activeTab]);
+
+  return (
+    <div
+      style={{
+        width: "clamp(200px,24vw,270px)",
+        aspectRatio: "9/19.5",
+        background: "#07070a",
+        borderRadius: "40px",
+        border: `1.5px solid rgba(255,255,255,0.14)`,
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
+        position: "relative",
+        boxShadow:
+          "0 40px 100px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.06)",
+        flexShrink: 0,
+      }}
+    >
+      {/* Dynamic island */}
+      <div
+        style={{
+          position: "absolute",
+          top: "14px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "68px",
+          height: "9px",
+          background: "#000",
+          borderRadius: "8px",
+          zIndex: 10,
+        }}
+      />
+
+      {/* Status bar spacer */}
+      <div style={{ height: "34px", flexShrink: 0 }} />
+
+      {/* Video container */}
+      <div
+        style={{
+          flex: 1,
+          position: "relative",
+          overflow: "hidden",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <video
+          ref={ref}
+          autoPlay
+          muted
+          loop
+          playsInline
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "contain",
+            transition: "opacity 0.26s ease",
+            background: "#07070a",
+            willChange: "transform",
+            transform: "translateZ(0)",
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
+          }}
+        />
+      </div>
+
+      {/* Home bar */}
+      <div
+        style={{
+          height: "26px",
+          flexShrink: 0,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <div
+          style={{
+            width: "34%",
+            height: "4px",
+            background: "rgba(255,255,255,0.16)",
+            borderRadius: "2px",
+          }}
+        />
+      </div>
+    </div>
+  );
+};
+
+/* ═══════════════════════════════════════════════════════════════════════
+   ONBOARDING SECTION — mirrors ZincSection layout exactly
+   Place /videos/Onboarding.mp4 in your public/videos folder.
+═══════════════════════════════════════════════════════════════════════ */
+const OnboardingSection = () => {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-8%" });
+
+  const steps = [
+    {
+      id: "welcome",
+      label: "Welcome",
+      desc: "First impression — the opening screen that sets the tone for the ZINC experience before any interaction.",
+    },
+    {
+      id: "setup",
+      label: "Setup",
+      desc: "Guided account creation with minimal friction — only the essentials, nothing more.",
+    },
+    {
+      id: "verify",
+      label: "Verify",
+      desc: "OTP verification via Firebase — secure, fast, and designed to feel seamless rather than like a checkpoint.",
+    },
+  ];
+
+  const [tab, setTab] = useState("welcome");
+
+  return (
+    <section
+      id="onboarding"
+      ref={ref}
+      className="section-pad"
+      style={{
+        padding: "120px 48px",
+        background: C.bg,
+        borderTop: `1px solid ${C.border}`,
+      }}
+    >
+      <div style={{ maxWidth: "1160px", margin: "0 auto" }}>
+        <motion.div
+          variants={fadeUp(0)}
+          initial="hidden"
+          animate={inView ? "visible" : "hidden"}
+        >
+          <SectionLabel>ZINC — Onboarding</SectionLabel>
+        </motion.div>
+
+        <div
+          className="zinc-grid"
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 290px",
+            gap: "72px",
+            alignItems: "center",
+          }}
+        >
+          {/* Left — text side */}
+          <motion.div
+            variants={fadeUp(0.06)}
+            initial="hidden"
+            animate={inView ? "visible" : "hidden"}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              maxWidth: "560px",
+              marginLeft: "0",
+            }}
+          >
+            <h2
+              style={{
+                fontFamily: "'Sora',sans-serif",
+                fontSize: "clamp(32px,5vw,64px)",
+                fontWeight: 600,
+                letterSpacing: "-0.04em",
+                lineHeight: 1.0,
+                color: C.text,
+                marginBottom: "28px",
+                textAlign: "center",
+                width: "100%",
+              }}
+            >
+              Onboarding
+            </h2>
+            <p
+              style={{
+                fontSize: "17px",
+                lineHeight: 1.8,
+                color: C.textSub,
+                maxWidth: "480px",
+                marginBottom: "44px",
+              }}
+            >
+              The onboarding wasn't just designed to collect information. It was designed to explain what Zinc does before asking users to trust it.
+
+I created custom AI-assisted visuals and carefully color-graded them to communicate themes of awareness, balance, and financial clarity. Motion was used intentionally throughout the flow to make the experience feel guided rather than rushed.
+
+Small details mattered. Modal overlays automatically dim the background to keep attention focused, transitions help users understand where they are in the journey, and every step was designed to reduce friction while building confidence.
+
+The goal was simple: help users understand the product, feel comfortable using it, and reach the first meaningful action without confusion.
+            </p>
+
+            <div
+              className="chip-row"
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "12px",
+                marginBottom: "44px",
+                justifyContent: "center",
+              }}
+            >
+              {[
+                "Reanimated 3",
+                "Firebase Auth",
+                "OTP Verification",
+                "Lottie",
+                "React Native",
+              ].map((t) => (
+                <Chip key={t}>{t}</Chip>
+              ))}
+            </div>
+
+            <p
+              style={{
+                fontFamily: "'Inter',sans-serif",
+                fontSize: "13px",
+                color: C.textMeta,
+                marginBottom: "12px",
+              }}
+            >
+              Preview a step:
+            </p>
+
+            <div
+              className="tab-row"
+              style={{
+                display: "flex",
+                gap: "8px",
+                flexWrap: "wrap",
+                marginBottom: "16px",
+              }}
+            >
+              {steps.map((s) => (
+                <TabBtn
+                  key={s.id}
+                  label={s.label}
+                  active={tab === s.id}
+                  onClick={() => setTab(s.id)}
+                />
+              ))}
+            </div>
+
+            <AnimatePresence mode="wait">
+              <motion.p
+                key={tab}
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -5 }}
+                transition={{ duration: 0.22 }}
+                style={{
+                  fontFamily: "'Inter',sans-serif",
+                  fontSize: "14px",
+                  color: C.textSub,
+                  lineHeight: 1.7,
+                  maxWidth: "420px",
+                }}
+              >
+                {steps.find((s) => s.id === tab)?.desc}
+              </motion.p>
+            </AnimatePresence>
+          </motion.div>
+
+          {/* Right — phone */}
+          <motion.div
+            variants={fadeUp(0.1)}
+            initial="hidden"
+            animate={inView ? "visible" : "hidden"}
+            className="zinc-phone-col"
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <div className="zinc-phone-wrap">
+              <OnboardingPhone activeTab={tab} />
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+/* ═══ CASE STUDY ═══ */
 const CaseStudy = () => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-8%" });
@@ -1118,20 +1422,11 @@ const CaseStudy = () => {
           </BtnOutline>
         </motion.div>
 
-        {/*
-          ── FIX: Removed gap:"1px" + background:C.border from wrapper.
-          ── Now using explicit borderRight + borderBottom per card.
-          ── borderRight removed on last card in each row via nth-child logic
-             which isn't available inline — instead we use borderRight on all
-             cards and clip with overflow:hidden on the wrapper. The wrapper
-             has no background so no bleed-through lines appear.
-        */}
         <div
           className="case-grid"
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-            /* NO gap, NO background — lines removed */
             overflow: "hidden",
             borderRadius: "2px",
           }}
@@ -1146,9 +1441,6 @@ const CaseStudy = () => {
                 background: C.surface,
                 padding: "32px 28px",
                 transition: "background 0.2s",
-                /* Each card draws its own right + bottom border.
-                   The wrapper overflow:hidden clips the rightmost and
-                   bottommost edges so no orphan lines appear. */
                 borderRight: `1px solid ${C.border}`,
                 borderBottom: `1px solid ${C.border}`,
               }}
@@ -1855,6 +2147,7 @@ export default function App() {
       <main>
         <Hero />
         <ZincSection />
+        <OnboardingSection />
         <CaseStudy />
         <MotionWork />
         <ResumeSection />
