@@ -754,7 +754,6 @@ const ZincPhone = ({ activeTab }) => {
         flexShrink: 0,
       }}
     >
-      {/* Dynamic island */}
       <div
         style={{
           position: "absolute",
@@ -768,11 +767,7 @@ const ZincPhone = ({ activeTab }) => {
           zIndex: 10,
         }}
       />
-
-      {/* Status bar spacer */}
       <div style={{ height: "34px", flexShrink: 0 }} />
-
-      {/* Video container */}
       <div
         style={{
           flex: 1,
@@ -802,8 +797,6 @@ const ZincPhone = ({ activeTab }) => {
           }}
         />
       </div>
-
-      {/* Home bar */}
       <div
         style={{
           height: "26px",
@@ -879,7 +872,6 @@ const ZincSection = () => {
             alignItems: "center",
           }}
         >
-          {/* Left */}
           <motion.div
             variants={fadeUp(0.06)}
             initial="hidden"
@@ -1000,7 +992,6 @@ const ZincSection = () => {
             </AnimatePresence>
           </motion.div>
 
-          {/* Right — phone */}
           <motion.div
             variants={fadeUp(0.1)}
             initial="hidden"
@@ -1022,11 +1013,7 @@ const ZincSection = () => {
   );
 };
 
-/* ═══════════════════════════════════════════════════════════════════════
-   ONBOARDING PHONE — same shell as ZincPhone, single video src
-   Drop /videos/Onboarding.mp4 into your public folder and it will
-   auto-play inside the phone frame automatically.
-═══════════════════════════════════════════════════════════════════════ */
+/* ═══ ONBOARDING PHONE ═══ */
 const OnboardingPhone = ({ activeTab }) => {
   const ref = useRef(null);
   const prev = useRef(null);
@@ -1073,7 +1060,6 @@ const OnboardingPhone = ({ activeTab }) => {
         flexShrink: 0,
       }}
     >
-      {/* Dynamic island */}
       <div
         style={{
           position: "absolute",
@@ -1087,11 +1073,7 @@ const OnboardingPhone = ({ activeTab }) => {
           zIndex: 10,
         }}
       />
-
-      {/* Status bar spacer */}
       <div style={{ height: "34px", flexShrink: 0 }} />
-
-      {/* Video container */}
       <div
         style={{
           flex: 1,
@@ -1121,8 +1103,6 @@ const OnboardingPhone = ({ activeTab }) => {
           }}
         />
       </div>
-
-      {/* Home bar */}
       <div
         style={{
           height: "26px",
@@ -1145,10 +1125,7 @@ const OnboardingPhone = ({ activeTab }) => {
   );
 };
 
-/* ═══════════════════════════════════════════════════════════════════════
-   ONBOARDING SECTION — mirrors ZincSection layout exactly
-   Place /videos/Onboarding.mp4 in your public/videos folder.
-═══════════════════════════════════════════════════════════════════════ */
+/* ═══ ONBOARDING SECTION ═══ */
 const OnboardingSection = () => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-8%" });
@@ -1202,7 +1179,6 @@ const OnboardingSection = () => {
             alignItems: "center",
           }}
         >
-          {/* Left — text side */}
           <motion.div
             variants={fadeUp(0.06)}
             initial="hidden"
@@ -1239,13 +1215,18 @@ const OnboardingSection = () => {
                 marginBottom: "44px",
               }}
             >
-              The onboarding wasn't just designed to collect information. It was designed to explain what Zinc does before asking users to trust it.
-
-I created custom AI-assisted visuals and carefully color-graded them to communicate themes of awareness, balance, and financial clarity. Motion was used intentionally throughout the flow to make the experience feel guided rather than rushed.
-
-Small details mattered. Modal overlays automatically dim the background to keep attention focused, transitions help users understand where they are in the journey, and every step was designed to reduce friction while building confidence.
-
-The goal was simple: help users understand the product, feel comfortable using it, and reach the first meaningful action without confusion.
+              The onboarding wasn't just designed to collect information. It was
+              designed to explain what Zinc does before asking users to trust
+              it. I created custom AI-assisted visuals and carefully
+              color-graded them to communicate themes of awareness, balance, and
+              financial clarity. Motion was used intentionally throughout the
+              flow to make the experience feel guided rather than rushed. Small
+              details mattered. Modal overlays automatically dim the background
+              to keep attention focused, transitions help users understand where
+              they are in the journey, and every step was designed to reduce
+              friction while building confidence. The goal was simple: help
+              users understand the product, feel comfortable using it, and reach
+              the first meaningful action without confusion.
             </p>
 
             <div
@@ -1319,7 +1300,6 @@ The goal was simple: help users understand the product, feel comfortable using i
             </AnimatePresence>
           </motion.div>
 
-          {/* Right — phone */}
           <motion.div
             variants={fadeUp(0.1)}
             initial="hidden"
@@ -1336,6 +1316,330 @@ The goal was simple: help users understand the product, feel comfortable using i
             </div>
           </motion.div>
         </div>
+      </div>
+    </section>
+  );
+};
+
+/* ═══════════════════════════════════════════════════════════════════════
+   GLUATTA PHONE — single video /videos/Gluatta.mov plays on loop
+═══════════════════════════════════════════════════════════════════════ */
+const GluattaPhone = () => {
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    ref.current.play().catch(() => {});
+  }, []);
+
+  return (
+    <div
+      style={{
+        width: "clamp(200px,24vw,270px)",
+        aspectRatio: "9/19.5",
+        background: "#07070a",
+        borderRadius: "40px",
+        border: `1.5px solid rgba(255,255,255,0.14)`,
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
+        position: "relative",
+        boxShadow:
+          "0 40px 100px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.06)",
+        flexShrink: 0,
+      }}
+    >
+      <div
+        style={{
+          position: "absolute",
+          top: "14px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "68px",
+          height: "9px",
+          background: "#000",
+          borderRadius: "8px",
+          zIndex: 10,
+        }}
+      />
+      <div style={{ height: "34px", flexShrink: 0 }} />
+      <div
+        style={{
+          flex: 1,
+          position: "relative",
+          overflow: "hidden",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <video
+          ref={ref}
+          src="/videos/Gluatta.mov"
+          autoPlay
+          muted
+          loop
+          playsInline
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "contain",
+            background: "#07070a",
+            willChange: "transform",
+            transform: "translateZ(0)",
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
+          }}
+        />
+      </div>
+      <div
+        style={{
+          height: "26px",
+          flexShrink: 0,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <div
+          style={{
+            width: "34%",
+            height: "4px",
+            background: "rgba(255,255,255,0.16)",
+            borderRadius: "2px",
+          }}
+        />
+      </div>
+    </div>
+  );
+};
+
+/* ═══════════════════════════════════════════════════════════════════════
+   GLUATTA SECTION — one Preview button, single looping video
+═══════════════════════════════════════════════════════════════════════ */
+const SecondSection = () => {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-8%" });
+
+  return (
+    <section
+      id="second-section"
+      ref={ref}
+      className="section-pad"
+      style={{
+        padding: "120px 48px",
+        background: C.bg,
+        borderTop: `1px solid ${C.border}`,
+      }}
+    >
+      <div style={{ maxWidth: "1160px", margin: "0 auto" }}>
+        <motion.div
+          variants={fadeUp(0)}
+          initial="hidden"
+          animate={inView ? "visible" : "hidden"}
+        >
+          <SectionLabel>Emotional Release Through Space Ritual</SectionLabel>
+        </motion.div>
+
+        <div
+          className="zinc-grid"
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 290px",
+            gap: "72px",
+            alignItems: "center",
+          }}
+        >
+          {/* Left — text side */}
+          <motion.div
+            variants={fadeUp(0.06)}
+            initial="hidden"
+            animate={inView ? "visible" : "hidden"}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              maxWidth: "560px",
+              marginLeft: "0",
+            }}
+          >
+            <h2
+              style={{
+                fontFamily: "'Sora',sans-serif",
+                fontSize: "clamp(32px,5vw,64px)",
+                fontWeight: 600,
+                letterSpacing: "-0.04em",
+                lineHeight: 1.0,
+                color: C.text,
+                marginBottom: "28px",
+                textAlign: "center",
+                width: "100%",
+              }}
+            >
+              Gluatta
+            </h2>
+            <p
+              style={{
+                fontSize: "17px",
+                lineHeight: 1.8,
+                color: C.textSub,
+                maxWidth: "480px",
+                marginBottom: "44px",
+              }}
+            >
+              An experimental wellbeing experience that transforms emotional
+              release into a cinematic space ritual through motion, interaction,
+              and storytelling.
+            </p>
+
+            <div
+              className="chip-row"
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "12px",
+                marginBottom: "44px",
+                justifyContent: "center",
+              }}
+            >
+              {[
+                "Reanimated 3",
+                "Firebase Auth",
+                "OTP Verification",
+                "Lottie",
+                "React Native",
+              ].map((t) => (
+                <Chip key={t}>{t}</Chip>
+              ))}
+            </div>
+
+            <p
+              style={{
+                fontFamily: "'Inter',sans-serif",
+                fontSize: "13px",
+                color: C.textMeta,
+                marginBottom: "12px",
+              }}
+            >
+              Preview:
+            </p>
+
+            {/* ── Single Preview button — no tab switching ── */}
+            <div
+              className="tab-row"
+              style={{
+                display: "flex",
+                gap: "8px",
+                flexWrap: "wrap",
+                marginBottom: "16px",
+              }}
+            >
+              <TabBtn label="Preview" active={true} onClick={() => {}} />
+            </div>
+
+            <motion.p
+              style={{
+                fontFamily: "'Inter',sans-serif",
+                fontSize: "14px",
+                color: C.textSub,
+                lineHeight: 1.7,
+                maxWidth: "420px",
+              }}
+            >
+              An experimental motion concept exploring emotional ritual through
+              spatial interaction design.
+            </motion.p>
+          </motion.div>
+
+          {/* Right — phone with Gluatta.mov */}
+          <motion.div
+            variants={fadeUp(0.1)}
+            initial="hidden"
+            animate={inView ? "visible" : "hidden"}
+            className="zinc-phone-col"
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <div className="zinc-phone-wrap">
+              <GluattaPhone />
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+/* ═══════════════════════════════════════════════════════════════════════
+   WHY GLUATTA — long-form personal write-up, placed right after the
+   Gluatta phone section.
+═══════════════════════════════════════════════════════════════════════ */
+const WhyGluattaSection = () => {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-8%" });
+
+  const paragraphs = [
+    "Gluatta started from a very personal observation. I noticed that many people around me, including friends and myself at times, go through periods of stress, overthinking, self-doubt, and emotional pressure. Most wellbeing products approach these moments in a calm, clinical, or highly professional way.",
+    "I wanted to explore a different direction. My belief was that if someone is already feeling low, opening another low-energy experience may not help them shift their state. Instead, I wanted to create an experience that feels energetic, uplifting, visually exciting, and emotionally engaging.",
+    "That's why Gluatta is built around motion, interaction, storytelling, and a space-inspired world.",
+    "The experience begins by asking users to write down whatever is weighing on them. Instead of simply saving a note or closing the app, the user launches that burden into space. They travel through the universe alongside their note, choose a planet, place it there, and finally destroy it. The journey ends with a message from the universe, creating a feeling of release and completion.",
+    "Every animation and interaction was intentionally designed to serve a purpose. The goal was never to add motion for decoration. The goal was to create energy. I wanted users to feel like they were moving away from the problem rather than sitting with it.",
+    "The space theme, 3D planets, flight sequence, destruction ritual, and universe feedback all work together to transform a negative emotional moment into a more positive and empowering experience.",
+    "Gluatta is an exploration of how interaction design, motion design, storytelling, and technology can be combined to create a more engaging approach to emotional wellbeing.",
+    "It is currently an experimental project in progress, designed for anyone who wants a different way to process stress, overthinking, and everyday emotional burdens.",
+  ];
+
+  return (
+    <section
+      ref={ref}
+      className="section-pad"
+      style={{
+        padding: "120px 48px",
+        background: C.surface,
+        borderTop: `1px solid ${C.border}`,
+      }}
+    >
+      <div style={{ maxWidth: "760px", margin: "0 auto" }}>
+        <motion.div
+          variants={fadeUp(0)}
+          initial="hidden"
+          animate={inView ? "visible" : "hidden"}
+        >
+          <SectionLabel>Gluatta — Why I Built This</SectionLabel>
+          <h2
+            style={{
+              fontFamily: "'Sora',sans-serif",
+              fontSize: "clamp(28px,5vw,56px)",
+              fontWeight: 600,
+              letterSpacing: "-0.04em",
+              lineHeight: 1.1,
+              color: C.text,
+              marginBottom: "36px",
+            }}
+          >
+            Why I Built Gluatta
+          </h2>
+        </motion.div>
+
+        {paragraphs.map((p, i) => (
+          <motion.p
+            key={i}
+            variants={fadeUp(0.04 * (i + 1))}
+            initial="hidden"
+            animate={inView ? "visible" : "hidden"}
+            style={{
+              fontSize: "17px",
+              lineHeight: 1.85,
+              color: C.textSub,
+              marginBottom: "20px",
+            }}
+          >
+            {p}
+          </motion.p>
+        ))}
       </div>
     </section>
   );
@@ -1390,7 +1694,8 @@ const CaseStudy = () => {
           animate={inView ? "visible" : "hidden"}
           style={{
             display: "flex",
-            justifyContent: window.innerWidth <= 768 ? "center" : "space-between",
+            justifyContent:
+              window.innerWidth <= 768 ? "center" : "space-between",
             alignItems: "flex-start",
             marginBottom: "48px",
             flexWrap: "wrap",
@@ -1748,7 +2053,8 @@ const MotionWork = () => {
           animate={inView ? "visible" : "hidden"}
           style={{
             display: "flex",
-            justifyContent: window.innerWidth <= 768 ? "center" : "space-between",
+            justifyContent:
+              window.innerWidth <= 768 ? "center" : "space-between",
             alignItems: "flex-start",
             marginBottom: "48px",
             flexWrap: "wrap",
@@ -2148,6 +2454,8 @@ export default function App() {
         <Hero />
         <ZincSection />
         <OnboardingSection />
+        <SecondSection />
+        <WhyGluattaSection />
         <CaseStudy />
         <MotionWork />
         <ResumeSection />
