@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 
 const C = {
@@ -52,19 +52,15 @@ const GlobalStyles = () => (
       100%{background-position:-200% 0}
     }
 
-    /* ── Nav ── */
     .nav-links  { display: flex !important; }
     .mob-menu   { display: none !important; }
 
-    /* ── Layout helpers ── */
     .zinc-grid  { grid-template-columns: 1fr 290px; }
     .two-col    { grid-template-columns: 1fr 1fr; }
 
-    /* ── Section padding ── */
     .section-pad { padding: 120px 48px; }
     .hero-pad    { padding: 120px 48px 80px; }
 
-    /* ═══ TABLET (≤960px) ═══ */
     @media (max-width: 960px) {
       .zinc-grid  { grid-template-columns: 1fr !important; }
       .two-col    { grid-template-columns: 1fr !important; }
@@ -78,7 +74,6 @@ const GlobalStyles = () => (
       .resume-row { flex-direction: column !important; gap: 24px !important; align-items: flex-start !important; }
     }
 
-    /* ═══ MOBILE (≤600px) ═══ */
     @media (max-width: 600px) {
       .section-pad { padding: 64px 20px !important; }
       .hero-pad    { padding: 88px 20px 48px !important; }
@@ -96,7 +91,6 @@ const GlobalStyles = () => (
       .about-details > div span:last-child { text-align: left !important; }
     }
 
-    /* ═══ SMALL LAPTOP (961px–1100px) ═══ */
     @media (min-width: 961px) and (max-width: 1100px) {
       .section-pad { padding: 100px 40px !important; }
       .hero-pad    { padding: 110px 40px 70px !important; }
@@ -707,120 +701,228 @@ const Hero = () => {
   );
 };
 
-/* ═══ ZINC PHONE ═══ */
-const ZincPhone = ({ activeTab }) => {
-  const ref = useRef(null);
-  const prev = useRef(null);
-  const srcs = {
-    feature: "/videos/Feature.mp4",
-    home: "/videos/Home.mp4",
-    rewards: "/videos/Rewards.mp4",
-  };
+/* ═══════════════════════════════════════════════════════════════
+   SHARED: useVideoTabSwitcher hook
+   Handles fade-out → src swap → canplay → fade-in for tab switches.
+   Also pauses video when scrolled off-screen to free decode slots.
+═══════════════════════════════════════════════════════════════ */
+const useVideoTabSwitcher = (srcs, activeTab) => {
+  const videoRef = useRef(null);
+  const prevTab = useRef(null);
+  const pendingTab = useRef(null);
+  const isSwitching = useRef(false);
+  const [opacity, setOpacity] = useState(0);
 
-  // Preload all videos immediately on mount so switching is instant
+  // Pause when off-screen, resume when back — frees mobile decode slots
   useEffect(() => {
-    Object.values(srcs).forEach((src) => {
-      const v = document.createElement("video");
-      v.src = src;
-      v.preload = "auto";
-      v.muted = true;
-    });
-    if (!ref.current) return;
-    ref.current.src = srcs[activeTab];
-    ref.current.load();
-    ref.current.play().catch(() => {});
-    prev.current = activeTab;
+    const el = videoRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          if (el.paused && el.src) el.play().catch(() => {});
+        } else {
+          if (!el.paused) el.pause();
+        }
+      },
+      { threshold: 0.1 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
   }, []);
 
+  // On mount: reveal once the first frame is ready
   useEffect(() => {
-    if (!ref.current || prev.current === activeTab) return;
-    prev.current = activeTab;
-    const v = ref.current;
-    // No opacity fade — instant swap, no delay
-    v.src = srcs[activeTab];
-    v.load();
-    v.play().catch(() => {});
-  }, [activeTab]);
+    const el = videoRef.current;
+    if (!el) return;
+    prevTab.current = activeTab;
 
-  return (
+    const reveal = () => {
+      setOpacity(1);
+      el.play().catch(() => {});
+    };
+
+    if (el.readyState >= 3) {
+      reveal();
+    } else {
+      el.addEventListener("canplay", reveal, { once: true });
+      // Safety: show after 5s even if canplay never fires (e.g. slow network)
+      const safety = setTimeout(reveal, 5000);
+      el.addEventListener("canplay", () => clearTimeout(safety), {
+        once: true,
+      });
+    }
+
+    return () => el.removeEventListener("canplay", reveal);
+  }, []);
+
+  const doSwitch = useCallback(
+    (tab) => {
+      const el = videoRef.current;
+      if (!el || prevTab.current === tab) return;
+
+      if (isSwitching.current) {
+        pendingTab.current = tab;
+        return;
+      }
+
+      isSwitching.current = true;
+      prevTab.current = tab;
+
+      // Fade out first
+      setOpacity(0);
+
+      setTimeout(() => {
+        el.src = srcs[tab];
+
+        const onReady = () => {
+          el.play().catch(() => {});
+          setOpacity(1);
+          isSwitching.current = false;
+          if (pendingTab.current && pendingTab.current !== tab) {
+            const next = pendingTab.current;
+            pendingTab.current = null;
+            doSwitch(next);
+          }
+        };
+
+        if (el.readyState >= 3) {
+          onReady();
+        } else {
+          el.addEventListener("canplay", onReady, { once: true });
+          el.load();
+          // Safety timeout
+          const safety = setTimeout(() => {
+            el.removeEventListener("canplay", onReady);
+            setOpacity(1);
+            el.play().catch(() => {});
+            isSwitching.current = false;
+            if (pendingTab.current && pendingTab.current !== tab) {
+              const next = pendingTab.current;
+              pendingTab.current = null;
+              doSwitch(next);
+            }
+          }, 4000);
+          el.addEventListener("canplay", () => clearTimeout(safety), {
+            once: true,
+          });
+        }
+      }, 150);
+    },
+    [srcs],
+  );
+
+  useEffect(() => {
+    if (prevTab.current !== null) {
+      doSwitch(activeTab);
+    }
+  }, [activeTab, doSwitch]);
+
+  return { videoRef, opacity };
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   SHARED: PhoneShell — the phone frame wrapper (visual unchanged)
+═══════════════════════════════════════════════════════════════ */
+const PhoneShell = ({ children }) => (
+  <div
+    style={{
+      width: "clamp(200px,24vw,270px)",
+      aspectRatio: "9/19.5",
+      background: "#07070a",
+      borderRadius: "40px",
+      border: "1.5px solid rgba(255,255,255,0.14)",
+      overflow: "hidden",
+      display: "flex",
+      flexDirection: "column",
+      position: "relative",
+      boxShadow:
+        "0 40px 100px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.06)",
+      flexShrink: 0,
+    }}
+  >
     <div
       style={{
-        width: "clamp(200px,24vw,270px)",
-        aspectRatio: "9/19.5",
-        background: "#07070a",
-        borderRadius: "40px",
-        border: `1.5px solid rgba(255,255,255,0.14)`,
+        position: "absolute",
+        top: "14px",
+        left: "50%",
+        transform: "translateX(-50%)",
+        width: "68px",
+        height: "9px",
+        background: "#000",
+        borderRadius: "8px",
+        zIndex: 10,
+      }}
+    />
+    <div style={{ height: "34px", flexShrink: 0 }} />
+    <div
+      style={{
+        flex: 1,
+        position: "relative",
         overflow: "hidden",
         display: "flex",
-        flexDirection: "column",
-        position: "relative",
-        boxShadow:
-          "0 40px 100px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.06)",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "#07070a",
+      }}
+    >
+      {children}
+    </div>
+    <div
+      style={{
+        height: "26px",
         flexShrink: 0,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
       <div
         style={{
-          position: "absolute",
-          top: "14px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          width: "68px",
-          height: "9px",
-          background: "#000",
-          borderRadius: "8px",
-          zIndex: 10,
+          width: "34%",
+          height: "4px",
+          background: "rgba(255,255,255,0.16)",
+          borderRadius: "2px",
         }}
       />
-      <div style={{ height: "34px", flexShrink: 0 }} />
-      <div
-        style={{
-          flex: 1,
-          position: "relative",
-          overflow: "hidden",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <video
-          ref={ref}
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "contain",
-            background: "#07070a",
-            willChange: "transform",
-            transform: "translateZ(0)",
-            backfaceVisibility: "hidden",
-            WebkitBackfaceVisibility: "hidden",
-          }}
-        />
-      </div>
-      <div
-        style={{
-          height: "26px",
-          flexShrink: 0,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <div
-          style={{
-            width: "34%",
-            height: "4px",
-            background: "rgba(255,255,255,0.16)",
-            borderRadius: "2px",
-          }}
-        />
-      </div>
     </div>
+  </div>
+);
+
+/* ═══ ZINC PHONE ═══ */
+const ZINC_SRCS = {
+  feature: "/videos/Feature.mp4",
+  home: "/videos/Home.mp4",
+  rewards: "/videos/Rewards.mp4",
+};
+
+const ZincPhone = ({ activeTab }) => {
+  const { videoRef, opacity } = useVideoTabSwitcher(ZINC_SRCS, activeTab);
+
+  return (
+    <PhoneShell>
+      <video
+        ref={videoRef}
+        src={ZINC_SRCS.feature}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        style={{
+          width: "100%",
+          height: "100%",
+          objectFit: "contain",
+          background: "#07070a",
+          opacity,
+          transition: "opacity 0.15s ease",
+          willChange: "opacity",
+          transform: "translateZ(0)",
+          backfaceVisibility: "hidden",
+          WebkitBackfaceVisibility: "hidden",
+        }}
+      />
+    </PhoneShell>
   );
 };
 
@@ -1019,117 +1121,39 @@ const ZincSection = () => {
 };
 
 /* ═══ ONBOARDING PHONE ═══ */
+const ONBOARDING_SRCS = {
+  welcome: "/videos/Welcome.mp4",
+  setup: "/videos/Setup.mp4",
+  verify: "/videos/Verify.mp4",
+};
+
 const OnboardingPhone = ({ activeTab }) => {
-  const ref = useRef(null);
-  const prev = useRef(null);
-  const srcs = {
-    welcome: "/videos/Welcome.mp4",
-    setup: "/videos/Setup.mp4",
-    verify: "/videos/Verify.mp4",
-  };
-
-  useEffect(() => {
-    Object.values(srcs).forEach((src) => {
-      const v = document.createElement("video");
-      v.src = src;
-      v.preload = "auto";
-      v.muted = true;
-    });
-    if (!ref.current) return;
-    ref.current.src = srcs[activeTab];
-    ref.current.load();
-    ref.current.play().catch(() => {});
-    prev.current = activeTab;
-  }, []);
-
-  useEffect(() => {
-    if (!ref.current || prev.current === activeTab) return;
-    prev.current = activeTab;
-    const v = ref.current;
-    v.src = srcs[activeTab];
-    v.load();
-    v.play().catch(() => {});
-  }, [activeTab]);
+  const { videoRef, opacity } = useVideoTabSwitcher(ONBOARDING_SRCS, activeTab);
 
   return (
-    <div
-      style={{
-        width: "clamp(200px,24vw,270px)",
-        aspectRatio: "9/19.5",
-        background: "#07070a",
-        borderRadius: "40px",
-        border: `1.5px solid rgba(255,255,255,0.14)`,
-        overflow: "hidden",
-        display: "flex",
-        flexDirection: "column",
-        position: "relative",
-        boxShadow:
-          "0 40px 100px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.06)",
-        flexShrink: 0,
-      }}
-    >
-      <div
+    <PhoneShell>
+      <video
+        ref={videoRef}
+        src={ONBOARDING_SRCS.welcome}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
         style={{
-          position: "absolute",
-          top: "14px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          width: "68px",
-          height: "9px",
-          background: "#000",
-          borderRadius: "8px",
-          zIndex: 10,
+          width: "100%",
+          height: "100%",
+          objectFit: "contain",
+          background: "#07070a",
+          opacity,
+          transition: "opacity 0.15s ease",
+          willChange: "opacity",
+          transform: "translateZ(0)",
+          backfaceVisibility: "hidden",
+          WebkitBackfaceVisibility: "hidden",
         }}
       />
-      <div style={{ height: "34px", flexShrink: 0 }} />
-      <div
-        style={{
-          flex: 1,
-          position: "relative",
-          overflow: "hidden",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <video
-          ref={ref}
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "contain",
-            background: "#07070a",
-            willChange: "transform",
-            transform: "translateZ(0)",
-            backfaceVisibility: "hidden",
-            WebkitBackfaceVisibility: "hidden",
-          }}
-        />
-      </div>
-      <div
-        style={{
-          height: "26px",
-          flexShrink: 0,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <div
-          style={{
-            width: "34%",
-            height: "4px",
-            background: "rgba(255,255,255,0.16)",
-            borderRadius: "2px",
-          }}
-        />
-      </div>
-    </div>
+    </PhoneShell>
   );
 };
 
@@ -1329,108 +1353,78 @@ const OnboardingSection = () => {
   );
 };
 
-/* ═══════════════════════════════════════════════════════════════════════
-   GLUATA PHONE — preload="auto" so video is ready immediately on scroll
-   NOTE: rename Gluatta.mov → Gluatta.mp4 for full Chrome support
-═══════════════════════════════════════════════════════════════════════ */
+/* ═══ GLUATTA PHONE ═══ */
 const GluattaPhone = () => {
-  const ref = useRef(null);
+  const videoRef = useRef(null);
+  const [opacity, setOpacity] = useState(0);
 
   useEffect(() => {
-    if (!ref.current) return;
-    ref.current.load();
-    ref.current.play().catch(() => {});
+    const el = videoRef.current;
+    if (!el) return;
+
+    const reveal = () => {
+      setOpacity(1);
+      el.play().catch(() => {});
+    };
+
+    if (el.readyState >= 3) {
+      reveal();
+    } else {
+      el.addEventListener("canplay", reveal, { once: true });
+      const safety = setTimeout(reveal, 5000);
+      el.addEventListener("canplay", () => clearTimeout(safety), {
+        once: true,
+      });
+    }
+
+    return () => el.removeEventListener("canplay", reveal);
+  }, []);
+
+  useEffect(() => {
+    const el = videoRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          if (el.paused) el.play().catch(() => {});
+        } else {
+          if (!el.paused) el.pause();
+        }
+      },
+      { threshold: 0.1 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
   }, []);
 
   return (
-    <div
-      style={{
-        width: "clamp(200px,24vw,270px)",
-        aspectRatio: "9/19.5",
-        background: "#07070a",
-        borderRadius: "40px",
-        border: `1.5px solid rgba(255,255,255,0.14)`,
-        overflow: "hidden",
-        display: "flex",
-        flexDirection: "column",
-        position: "relative",
-        boxShadow:
-          "0 40px 100px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.06)",
-        flexShrink: 0,
-      }}
-    >
-      <div
+    <PhoneShell>
+      <video
+        ref={videoRef}
+        src="/videos/Gluatta.mp4"
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
         style={{
-          position: "absolute",
-          top: "14px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          width: "68px",
-          height: "9px",
-          background: "#000",
-          borderRadius: "8px",
-          zIndex: 10,
+          width: "100%",
+          height: "100%",
+          objectFit: "contain",
+          background: "#07070a",
+          opacity,
+          transition: "opacity 0.15s ease",
+          willChange: "opacity",
+          transform: "translateZ(0)",
+          backfaceVisibility: "hidden",
+          WebkitBackfaceVisibility: "hidden",
         }}
       />
-      <div style={{ height: "34px", flexShrink: 0 }} />
-      <div
-        style={{
-          flex: 1,
-          position: "relative",
-          overflow: "hidden",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <video
-          ref={ref}
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "contain",
-            background: "#07070a",
-            willChange: "transform",
-            transform: "translateZ(0)",
-            backfaceVisibility: "hidden",
-            WebkitBackfaceVisibility: "hidden",
-          }}
-        >
-          {/* MP4 first — Chrome doesn't support .mov. Rename your file to Gluatta.mp4 */}
-          <source src="/videos/Gluatta.mp4" type="video/mp4" />
-          <source src="/videos/Gluatta.mov" type="video/quicktime" />
-        </video>
-      </div>
-      <div
-        style={{
-          height: "26px",
-          flexShrink: 0,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <div
-          style={{
-            width: "34%",
-            height: "4px",
-            background: "rgba(255,255,255,0.16)",
-            borderRadius: "2px",
-          }}
-        />
-      </div>
-    </div>
+    </PhoneShell>
   );
 };
 
-/* ═══════════════════════════════════════════════════════════════════════
-   GLUATA SECTION — one Preview button, single looping video
-═══════════════════════════════════════════════════════════════════════ */
+/* ═══ SECOND SECTION (Gluata) ═══ */
 const SecondSection = () => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-8%" });
@@ -1464,7 +1458,6 @@ const SecondSection = () => {
             alignItems: "center",
           }}
         >
-          {/* Left — text side */}
           <motion.div
             variants={fadeUp(0.06)}
             initial="hidden"
@@ -1564,7 +1557,6 @@ const SecondSection = () => {
             </motion.p>
           </motion.div>
 
-          {/* Right — phone with Gluatta.mov */}
           <motion.div
             variants={fadeUp(0.1)}
             initial="hidden"
@@ -1586,9 +1578,7 @@ const SecondSection = () => {
   );
 };
 
-/* ═══════════════════════════════════════════════════════════════════════
-   WHY GLUATA — long-form personal write-up
-═══════════════════════════════════════════════════════════════════════ */
+/* ═══ WHY GLUATTA SECTION ═══ */
 const WhyGluattaSection = () => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-8%" });
@@ -1657,12 +1647,7 @@ const WhyGluattaSection = () => {
   );
 };
 
-/* ═══════════════════════════════════════════════════════════════════════
-   GLUATA VIDEO SECTION — FIX: removed fixed aspectRatio so the tall
-   After Effects video (1350px height) renders at its natural dimensions
-   without being cropped. Container is now height:auto, video is
-   width:100% height:auto objectFit:contain.
-═══════════════════════════════════════════════════════════════════════ */
+/* ═══ GLUATTA VIDEO SECTION ═══ */
 const GluattaVideoSection = () => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-8%" });
@@ -1690,14 +1675,13 @@ const GluattaVideoSection = () => {
         initial="hidden"
         animate={inView ? "visible" : "hidden"}
         style={{
-          maxWidth: "760px" /* narrower — suits portrait/tall video */,
+          maxWidth: "760px",
           margin: "0 auto",
           borderRadius: "16px",
           overflow: "hidden",
           border: `1px solid ${C.border}`,
           background: "#000",
           position: "relative",
-          /* NO aspectRatio — let the video define its own height */
         }}
       >
         {!error ? (
@@ -1713,9 +1697,9 @@ const GluattaVideoSection = () => {
             onError={() => setError(true)}
             style={{
               width: "100%",
-              height: "auto" /* ← was "100%" which caused crop */,
+              height: "auto",
               display: "block",
-              objectFit: "contain" /* ← was "cover" which caused crop */,
+              objectFit: "contain",
               opacity: ready ? 1 : 0,
               transition: "opacity 0.4s",
             }}
