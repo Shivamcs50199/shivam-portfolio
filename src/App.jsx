@@ -1592,6 +1592,7 @@ const WhyGluattaSection = () => {
     "The space theme, 3D planets, flight sequence, destruction ritual, and universe feedback all work together to transform a negative emotional moment into a more positive and empowering experience.",
     "Gluata is an exploration of how interaction design, motion design, storytelling, and technology can be combined to create a more engaging approach to emotional wellbeing.",
     "It is currently an experimental project in progress, designed for anyone who wants a different way to process stress, overthinking, and everyday emotional burdens.",
+    "As Gluata continues to evolve, I'm exploring ways to make the experience feel more personal and reflective through AI. One direction I'm particularly interested in is allowing the experience to understand what users choose to release and respond with thoughtful, contextual reflections at the end of the journey. Alongside this, I continue to refine the motion, storytelling, and interaction design to make the experience feel more meaningful and emotionally engaging.",
   ];
 
   return (
@@ -2344,9 +2345,12 @@ const About = () => {
           >
             <div className="about-details">
               {[
-                ["Currently Building", "ZINC — React Native Fintech App"],
+                ["Currently Building", "Gluata — React Native App"],
                 ["Role", "Design Engineer · Creative Frontend"],
-                ["Experience", "Clevertize · PlaySimple Games · MPS Limited"],
+                [
+                  "Experience",
+                  "Clevertize · PlaySimple Mobile Games · MPS Limited",
+                ],
                 ["Based", "Bangalore, India"],
                 ["Open To", "Full-time · Contract"],
                 ["Stack", "React Native · React · TypeScript · Reanimated 3"],
