@@ -717,9 +717,17 @@ const ZincPhone = ({ activeTab }) => {
     rewards: "/videos/Rewards.mp4",
   };
 
+  // Preload all videos immediately on mount so switching is instant
   useEffect(() => {
+    Object.values(srcs).forEach((src) => {
+      const v = document.createElement("video");
+      v.src = src;
+      v.preload = "auto";
+      v.muted = true;
+    });
     if (!ref.current) return;
     ref.current.src = srcs[activeTab];
+    ref.current.load();
     ref.current.play().catch(() => {});
     prev.current = activeTab;
   }, []);
@@ -728,13 +736,10 @@ const ZincPhone = ({ activeTab }) => {
     if (!ref.current || prev.current === activeTab) return;
     prev.current = activeTab;
     const v = ref.current;
-    v.style.opacity = "0";
-    setTimeout(() => {
-      v.src = srcs[activeTab];
-      v.load();
-      v.play().catch(() => {});
-      v.style.opacity = "1";
-    }, 260);
+    // No opacity fade — instant swap, no delay
+    v.src = srcs[activeTab];
+    v.load();
+    v.play().catch(() => {});
   }, [activeTab]);
 
   return (
@@ -784,11 +789,11 @@ const ZincPhone = ({ activeTab }) => {
           muted
           loop
           playsInline
+          preload="auto"
           style={{
             width: "100%",
             height: "100%",
             objectFit: "contain",
-            transition: "opacity 0.26s ease",
             background: "#07070a",
             willChange: "transform",
             transform: "translateZ(0)",
@@ -1024,8 +1029,15 @@ const OnboardingPhone = ({ activeTab }) => {
   };
 
   useEffect(() => {
+    Object.values(srcs).forEach((src) => {
+      const v = document.createElement("video");
+      v.src = src;
+      v.preload = "auto";
+      v.muted = true;
+    });
     if (!ref.current) return;
     ref.current.src = srcs[activeTab];
+    ref.current.load();
     ref.current.play().catch(() => {});
     prev.current = activeTab;
   }, []);
@@ -1034,13 +1046,9 @@ const OnboardingPhone = ({ activeTab }) => {
     if (!ref.current || prev.current === activeTab) return;
     prev.current = activeTab;
     const v = ref.current;
-    v.style.opacity = "0";
-    setTimeout(() => {
-      v.src = srcs[activeTab];
-      v.load();
-      v.play().catch(() => {});
-      v.style.opacity = "1";
-    }, 260);
+    v.src = srcs[activeTab];
+    v.load();
+    v.play().catch(() => {});
   }, [activeTab]);
 
   return (
@@ -1090,11 +1098,11 @@ const OnboardingPhone = ({ activeTab }) => {
           muted
           loop
           playsInline
+          preload="auto"
           style={{
             width: "100%",
             height: "100%",
             objectFit: "contain",
-            transition: "opacity 0.26s ease",
             background: "#07070a",
             willChange: "transform",
             transform: "translateZ(0)",
@@ -1322,13 +1330,15 @@ const OnboardingSection = () => {
 };
 
 /* ═══════════════════════════════════════════════════════════════════════
-   GLUATA PHONE — single video /videos/Gluatta.mov plays on loop
+   GLUATA PHONE — preload="auto" so video is ready immediately on scroll
+   NOTE: rename Gluatta.mov → Gluatta.mp4 for full Chrome support
 ═══════════════════════════════════════════════════════════════════════ */
 const GluattaPhone = () => {
   const ref = useRef(null);
 
   useEffect(() => {
     if (!ref.current) return;
+    ref.current.load();
     ref.current.play().catch(() => {});
   }, []);
 
@@ -1375,11 +1385,11 @@ const GluattaPhone = () => {
       >
         <video
           ref={ref}
-          src="/videos/Gluatta.mov"
           autoPlay
           muted
           loop
           playsInline
+          preload="auto"
           style={{
             width: "100%",
             height: "100%",
@@ -1390,7 +1400,11 @@ const GluattaPhone = () => {
             backfaceVisibility: "hidden",
             WebkitBackfaceVisibility: "hidden",
           }}
-        />
+        >
+          {/* MP4 first — Chrome doesn't support .mov. Rename your file to Gluatta.mp4 */}
+          <source src="/videos/Gluatta.mp4" type="video/mp4" />
+          <source src="/videos/Gluatta.mov" type="video/quicktime" />
+        </video>
       </div>
       <div
         style={{
