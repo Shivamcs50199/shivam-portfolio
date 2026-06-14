@@ -1322,7 +1322,7 @@ const OnboardingSection = () => {
 };
 
 /* ═══════════════════════════════════════════════════════════════════════
-   GLUATTA PHONE — single video /videos/Gluatta.mov plays on loop
+   GLUATA PHONE — single video /videos/Gluatta.mov plays on loop
 ═══════════════════════════════════════════════════════════════════════ */
 const GluattaPhone = () => {
   const ref = useRef(null);
@@ -1415,7 +1415,7 @@ const GluattaPhone = () => {
 };
 
 /* ═══════════════════════════════════════════════════════════════════════
-   GLUATTA SECTION — one Preview button, single looping video
+   GLUATA SECTION — one Preview button, single looping video
 ═══════════════════════════════════════════════════════════════════════ */
 const SecondSection = () => {
   const ref = useRef(null);
@@ -1476,7 +1476,7 @@ const SecondSection = () => {
                 width: "100%",
               }}
             >
-              Gluatta
+              Gluata
             </h2>
             <p
               style={{
@@ -1524,7 +1524,6 @@ const SecondSection = () => {
               Preview:
             </p>
 
-            {/* ── Single Preview button — no tab switching ── */}
             <div
               className="tab-row"
               style={{
@@ -1574,21 +1573,20 @@ const SecondSection = () => {
 };
 
 /* ═══════════════════════════════════════════════════════════════════════
-   WHY GLUATTA — long-form personal write-up, placed right after the
-   Gluatta phone section.
+   WHY GLUATA — long-form personal write-up
 ═══════════════════════════════════════════════════════════════════════ */
 const WhyGluattaSection = () => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-8%" });
 
   const paragraphs = [
-    "Gluatta started from a very personal observation. I noticed that many people around me, including friends and myself at times, go through periods of stress, overthinking, self-doubt, and emotional pressure. Most wellbeing products approach these moments in a calm, clinical, or highly professional way.",
+    "Gluata started from a very personal observation. I noticed that many people around me, including friends and myself at times, go through periods of stress, overthinking, self-doubt, and emotional pressure. Most wellbeing products approach these moments in a calm, clinical, or highly professional way.",
     "I wanted to explore a different direction. My belief was that if someone is already feeling low, opening another low-energy experience may not help them shift their state. Instead, I wanted to create an experience that feels energetic, uplifting, visually exciting, and emotionally engaging.",
-    "That's why Gluatta is built around motion, interaction, storytelling, and a space-inspired world.",
+    "That's why Gluata is built around motion, interaction, storytelling, and a space-inspired world.",
     "The experience begins by asking users to write down whatever is weighing on them. Instead of simply saving a note or closing the app, the user launches that burden into space. They travel through the universe alongside their note, choose a planet, place it there, and finally destroy it. The journey ends with a message from the universe, creating a feeling of release and completion.",
     "Every animation and interaction was intentionally designed to serve a purpose. The goal was never to add motion for decoration. The goal was to create energy. I wanted users to feel like they were moving away from the problem rather than sitting with it.",
     "The space theme, 3D planets, flight sequence, destruction ritual, and universe feedback all work together to transform a negative emotional moment into a more positive and empowering experience.",
-    "Gluatta is an exploration of how interaction design, motion design, storytelling, and technology can be combined to create a more engaging approach to emotional wellbeing.",
+    "Gluata is an exploration of how interaction design, motion design, storytelling, and technology can be combined to create a more engaging approach to emotional wellbeing.",
     "It is currently an experimental project in progress, designed for anyone who wants a different way to process stress, overthinking, and everyday emotional burdens.",
   ];
 
@@ -1620,7 +1618,7 @@ const WhyGluattaSection = () => {
               marginBottom: "36px",
             }}
           >
-            Why I Built Gluatta
+            Why I Built Gluata
           </h2>
         </motion.div>
 
@@ -1641,6 +1639,100 @@ const WhyGluattaSection = () => {
           </motion.p>
         ))}
       </div>
+    </section>
+  );
+};
+
+/* ═══════════════════════════════════════════════════════════════════════
+   GLUATA VIDEO SECTION — FIX: removed fixed aspectRatio so the tall
+   After Effects video (1350px height) renders at its natural dimensions
+   without being cropped. Container is now height:auto, video is
+   width:100% height:auto objectFit:contain.
+═══════════════════════════════════════════════════════════════════════ */
+const GluattaVideoSection = () => {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-8%" });
+  const vRef = useRef(null);
+  const [error, setError] = useState(false);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    if (!vRef.current) return;
+    vRef.current.play().catch(() => {});
+  }, []);
+
+  return (
+    <section
+      ref={ref}
+      className="section-pad"
+      style={{
+        padding: "120px 48px",
+        background: C.bg,
+        borderTop: `1px solid ${C.border}`,
+      }}
+    >
+      <motion.div
+        variants={fadeUp(0)}
+        initial="hidden"
+        animate={inView ? "visible" : "hidden"}
+        style={{
+          maxWidth: "760px" /* narrower — suits portrait/tall video */,
+          margin: "0 auto",
+          borderRadius: "16px",
+          overflow: "hidden",
+          border: `1px solid ${C.border}`,
+          background: "#000",
+          position: "relative",
+          /* NO aspectRatio — let the video define its own height */
+        }}
+      >
+        {!error ? (
+          <video
+            ref={vRef}
+            src="/videos/gluata.mp4"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            onCanPlay={() => setReady(true)}
+            onError={() => setError(true)}
+            style={{
+              width: "100%",
+              height: "auto" /* ← was "100%" which caused crop */,
+              display: "block",
+              objectFit: "contain" /* ← was "cover" which caused crop */,
+              opacity: ready ? 1 : 0,
+              transition: "opacity 0.4s",
+            }}
+          />
+        ) : (
+          <div
+            style={{
+              minHeight: "320px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "8px",
+              color: C.textMeta,
+            }}
+          >
+            <span style={{ fontSize: "24px", opacity: 0.3 }}>▶</span>
+            <span
+              style={{
+                fontFamily: "'DM Mono',monospace",
+                fontSize: "11px",
+                textAlign: "center",
+                padding: "0 16px",
+              }}
+            >
+              Could not load /videos/gluata.mp4 — check filename casing, folder
+              location (public/videos/), and that the format is H.264 MP4.
+            </span>
+          </div>
+        )}
+      </motion.div>
     </section>
   );
 };
@@ -2456,6 +2548,7 @@ export default function App() {
         <OnboardingSection />
         <SecondSection />
         <WhyGluattaSection />
+        <GluattaVideoSection />
         <CaseStudy />
         <MotionWork />
         <ResumeSection />
