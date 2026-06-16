@@ -936,6 +936,7 @@ const EngineeringStrip = ({ inView }) => (
       flexWrap: "wrap",
       gap: "8px",
       marginTop: "52px",
+      justifyContent: "center",
     }}
   >
     {ENGINEERING_CHIPS.map((label) => (
