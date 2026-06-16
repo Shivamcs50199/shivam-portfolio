@@ -611,13 +611,8 @@ const Hero = () => {
             marginBottom: "64px",
           }}
         >
-          Design Engineer with 7 years of experience across motion design, UX,
-          and frontend development. I design and build digital products where
-          interaction, motion, and usability work together to create meaningful
-          user experiences. Recently launched{" "}
-          <span style={{ color: C.text, fontWeight: 500 }}>ZINC</span>, a React
-          Native fintech application built from concept to production. Currently
-          under Play Store review.
+          Design. Code. Ship. Built ZINC. Building Gluata. React Native •
+          Product Design • Motion
         </motion.p>
 
         <motion.div
@@ -703,8 +698,6 @@ const Hero = () => {
 
 /* ═══════════════════════════════════════════════════════════════
    SHARED: useVideoTabSwitcher hook
-   Handles fade-out → src swap → canplay → fade-in for tab switches.
-   Also pauses video when scrolled off-screen to free decode slots.
 ═══════════════════════════════════════════════════════════════ */
 const useVideoTabSwitcher = (srcs, activeTab) => {
   const videoRef = useRef(null);
@@ -713,7 +706,6 @@ const useVideoTabSwitcher = (srcs, activeTab) => {
   const isSwitching = useRef(false);
   const [opacity, setOpacity] = useState(0);
 
-  // Pause when off-screen, resume when back — frees mobile decode slots
   useEffect(() => {
     const el = videoRef.current;
     if (!el) return;
@@ -731,7 +723,6 @@ const useVideoTabSwitcher = (srcs, activeTab) => {
     return () => observer.disconnect();
   }, []);
 
-  // On mount: reveal once the first frame is ready
   useEffect(() => {
     const el = videoRef.current;
     if (!el) return;
@@ -746,7 +737,6 @@ const useVideoTabSwitcher = (srcs, activeTab) => {
       reveal();
     } else {
       el.addEventListener("canplay", reveal, { once: true });
-      // Safety: show after 5s even if canplay never fires (e.g. slow network)
       const safety = setTimeout(reveal, 5000);
       el.addEventListener("canplay", () => clearTimeout(safety), {
         once: true,
@@ -769,7 +759,6 @@ const useVideoTabSwitcher = (srcs, activeTab) => {
       isSwitching.current = true;
       prevTab.current = tab;
 
-      // Fade out first
       setOpacity(0);
 
       setTimeout(() => {
@@ -791,7 +780,6 @@ const useVideoTabSwitcher = (srcs, activeTab) => {
         } else {
           el.addEventListener("canplay", onReady, { once: true });
           el.load();
-          // Safety timeout
           const safety = setTimeout(() => {
             el.removeEventListener("canplay", onReady);
             setOpacity(1);
@@ -822,7 +810,7 @@ const useVideoTabSwitcher = (srcs, activeTab) => {
 };
 
 /* ═══════════════════════════════════════════════════════════════
-   SHARED: PhoneShell — the phone frame wrapper (visual unchanged)
+   SHARED: PhoneShell
 ═══════════════════════════════════════════════════════════════ */
 const PhoneShell = ({ children }) => (
   <div
@@ -926,6 +914,36 @@ const ZincPhone = ({ activeTab }) => {
   );
 };
 
+/* ═══ ENGINEERING PROOF STRIP ═══ */
+const ENGINEERING_CHIPS = [
+  "PDF Processing Pipeline",
+  "Firebase Authentication",
+  "OTP Verification",
+  "Gemini Integration",
+  "Subscription Detection",
+  "SDK Migration",
+  "Play Store Deployment",
+  "SHA-256 Debugging",
+];
+
+const EngineeringStrip = ({ inView }) => (
+  <motion.div
+    variants={fadeUp(0.16)}
+    initial="hidden"
+    animate={inView ? "visible" : "hidden"}
+    style={{
+      display: "flex",
+      flexWrap: "wrap",
+      gap: "8px",
+      marginTop: "52px",
+    }}
+  >
+    {ENGINEERING_CHIPS.map((label) => (
+      <Chip key={label}>{label}</Chip>
+    ))}
+  </motion.div>
+);
+
 /* ═══ ZINC SECTION ═══ */
 const ZincSection = () => {
   const [tab, setTab] = useState("feature");
@@ -936,17 +954,17 @@ const ZincSection = () => {
     {
       id: "feature",
       label: "Feature",
-      desc: "Subscription & spending leak detector — core product value. Analyses PDF bank statements to surface recurring charges automatically.",
+      desc: "Built the complete pipeline behind the feature, document picker, validation, PDF extraction, Gemini integration, response parsing, and subscription detection. Also handled SDK migrations, deprecated packages, and dependency issues while keeping the experience simple for users.",
     },
     {
       id: "home",
       label: "Home",
-      desc: "Dashboard showing available credit, usage bar, quick actions, and recent transactions at a glance.",
+      desc: "Designed the dashboard to make financial insights easy to scan. Used visual hierarchy, motion, and progressive disclosure to keep complex data simple and actionable.",
     },
     {
       id: "rewards",
       label: "Rewards",
-      desc: "Cashback reveal with Lottie confetti animation and animated count-up — motion that feels earned, not decorative.",
+      desc: "Built the rewards system using Rive, After Effects, and React Native interactions. Focused on animation timing, feedback loops, and state management to make progress feel rewarding and engaging.",
     },
   ];
 
@@ -1015,15 +1033,12 @@ const ZincSection = () => {
                 marginBottom: "44px",
               }}
             >
-              ZINC began with a problem I personally faced — forgotten
-              subscriptions quietly draining money every month. After speaking
-              with friends, family members, and working professionals, I
-              realized the problem was far more common than I expected. Rather
-              than building a feature-heavy finance app, I focused on solving
-              one problem really well. I designed and built ZINC from scratch,
-              creating the product strategy, user experience, motion system, and
-              frontend implementation around a single goal: helping users become
-              more aware of where their money goes.
+              ZINC started with a problem I was facing myself, forgotten
+              subscriptions quietly taking money every month. After talking to
+              people around me, I realized it was more common than I thought. So
+              I built ZINC. From product thinking and UX to motion systems and
+              React Native development, I designed and built the entire
+              experience from scratch.
             </p>
 
             <div
@@ -1097,6 +1112,9 @@ const ZincSection = () => {
                 {tabs.find((t) => t.id === tab)?.desc}
               </motion.p>
             </AnimatePresence>
+
+            {/* ── Engineering proof strip ── */}
+            <EngineeringStrip inView={inView} />
           </motion.div>
 
           <motion.div
@@ -1166,17 +1184,17 @@ const OnboardingSection = () => {
     {
       id: "welcome",
       label: "Welcome",
-      desc: "First impression — the opening screen that sets the tone for the ZINC experience before any interaction.",
+      desc: "Designed a custom welcome screen with Photoshop-crafted overlays and carefully tuned timing. While resources load in the background, users get a clear first impression of what ZINC does and why it matters.",
     },
     {
       id: "setup",
       label: "Setup",
-      desc: "Guided account creation with minimal friction — only the essentials, nothing more.",
+      desc: "Built the setup flow with synchronized modal and overlay animations to keep attention focused on the active step. Every screen was kept intentionally minimal to reduce friction and improve clarity.",
     },
     {
       id: "verify",
       label: "Verify",
-      desc: "OTP verification via Firebase — secure, fast, and designed to feel seamless rather than like a checkpoint.",
+      desc: "Built a production-ready OTP verification flow using Firebase Authentication and reCAPTCHA. Solved complex deployment issues, including Play Store SHA-256 signing mismatches, to ensure a smooth and reliable verification experience.",
     },
   ];
 
@@ -1247,18 +1265,11 @@ const OnboardingSection = () => {
                 marginBottom: "44px",
               }}
             >
-              The onboarding wasn't just designed to collect information. It was
-              designed to explain what Zinc does before asking users to trust
-              it. I created custom AI-assisted visuals and carefully
-              color-graded them to communicate themes of awareness, balance, and
-              financial clarity. Motion was used intentionally throughout the
-              flow to make the experience feel guided rather than rushed. Small
-              details mattered. Modal overlays automatically dim the background
-              to keep attention focused, transitions help users understand where
-              they are in the journey, and every step was designed to reduce
-              friction while building confidence. The goal was simple: help
-              users understand the product, feel comfortable using it, and reach
-              the first meaningful action without confusion.
+              The onboarding was designed to build understanding before trust. I
+              built a custom splash screen that introduces the product while key
+              resources load in the background, then used motion and progressive
+              disclosure to guide users through their first experience with
+              minimal friction.
             </p>
 
             <div
@@ -1584,15 +1595,13 @@ const WhyGluattaSection = () => {
   const inView = useInView(ref, { once: true, margin: "-8%" });
 
   const paragraphs = [
-    "Gluata started from a very personal observation. I noticed that many people around me, including friends and myself at times, go through periods of stress, overthinking, self-doubt, and emotional pressure. Most wellbeing products approach these moments in a calm, clinical, or highly professional way.",
-    "I wanted to explore a different direction. My belief was that if someone is already feeling low, opening another low-energy experience may not help them shift their state. Instead, I wanted to create an experience that feels energetic, uplifting, visually exciting, and emotionally engaging.",
-    "That's why Gluata is built around motion, interaction, storytelling, and a space-inspired world.",
-    "The experience begins by asking users to write down whatever is weighing on them. Instead of simply saving a note or closing the app, the user launches that burden into space. They travel through the universe alongside their note, choose a planet, place it there, and finally destroy it. The journey ends with a message from the universe, creating a feeling of release and completion.",
-    "Every animation and interaction was intentionally designed to serve a purpose. The goal was never to add motion for decoration. The goal was to create energy. I wanted users to feel like they were moving away from the problem rather than sitting with it.",
-    "The space theme, 3D planets, flight sequence, destruction ritual, and universe feedback all work together to transform a negative emotional moment into a more positive and empowering experience.",
-    "Gluata is an exploration of how interaction design, motion design, storytelling, and technology can be combined to create a more engaging approach to emotional wellbeing.",
-    "It is currently an experimental project in progress, designed for anyone who wants a different way to process stress, overthinking, and everyday emotional burdens.",
-    "As Gluata continues to evolve, I'm exploring ways to make the experience feel more personal and reflective through AI. One direction I'm particularly interested in is allowing the experience to understand what users choose to release and respond with thoughtful, contextual reflections at the end of the journey. Alongside this, I continue to refine the motion, storytelling, and interaction design to make the experience feel more meaningful and emotionally engaging.",
+    "Gluata started from a simple observation: a lot of people struggle with stress, overthinking, and emotional pressure. Most wellbeing apps respond with calm, clinical experiences. I wanted to explore a different approach",
+
+    "Instead of sitting with the problem, users write it down, launch it into space, travel alongside it, place it on a planet, and finally destroy it. The goal isn't distraction—it's creating a feeling of release through motion, interaction, and storytelling",
+
+    "Every animation and interaction serves a purpose. The space world, flight sequence, and destruction ritual are designed to turn a heavy moment into something more empowering and memorable",
+
+    "Gluata is an experimental project exploring how design, motion, and technology can create a more engaging approach to emotional wellbeing. I'm currently exploring AI-driven reflections to make the experience feel even more personal and meaningful.",
   ];
 
   return (
