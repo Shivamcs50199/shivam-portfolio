@@ -1820,7 +1820,7 @@ const CaseStudy = () => {
             </h2>
           </div>
           <BtnOutline
-            href="https://positive-relation-d99.notion.site/Case-Study-Zinc-3726a866524e808797b8de851bd64974"
+            href="https://www.behance.net/gallery/251586725/Case-Study-Zinc-Finance-App"
             target="_blank"
             style={{ alignSelf: "flex-start" }}
           >
