@@ -9,13 +9,13 @@ const CODE_GLYPHS = [
   "<>",
   "{}",
   "//",
-  "Aa",
+  "===",
   "/*",
   "*/",
   "=>",
   "[]",
   "()",
-  ";;",
+  ";:",
   "&&",
   "||",
   "!=",
@@ -47,7 +47,7 @@ const options = {
   },
   particles: {
     number: {
-      value: 120,
+      value: 170,
       density: { enable: true, width: 1440, height: 900 },
     },
     color: {
@@ -149,7 +149,9 @@ export default function ParticleBackground() {
   console.log("ParticleBackground render");
   const initEngine = useCallback(async (engine) => {
     console.log("initEngine called");
+    console.time("loadSlim");
     await loadSlim(engine);
+    console.timeEnd("loadSlim");
     console.log("loadSlim done");
     await loadTextShape(engine);
     console.log("loadTextShape done");
