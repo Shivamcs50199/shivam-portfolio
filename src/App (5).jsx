@@ -1371,21 +1371,41 @@ const OnboardingSection = () => {
   );
 };
 
-/* ═══ ZINC DESIGN SYSTEM VIDEO SECTION ═══ */
-const ZincDesignSystemSection = () => {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-8%" });
-  const vRef = useRef(null);
+/* ═══ SYSTEM SHOWCASE PHONE (shared by Design System + Motion System) ═══ */
+const SystemPhone = ({ src }) => {
+  const videoRef = useRef(null);
+  const [opacity, setOpacity] = useState(0);
   const [error, setError] = useState(false);
-  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const el = vRef.current;
+    const el = videoRef.current;
+    if (!el) return;
+
+    const reveal = () => {
+      setOpacity(1);
+      el.play().catch(() => {});
+    };
+
+    if (el.readyState >= 3) {
+      reveal();
+    } else {
+      el.addEventListener("canplay", reveal, { once: true });
+      const safety = setTimeout(reveal, 5000);
+      el.addEventListener("canplay", () => clearTimeout(safety), {
+        once: true,
+      });
+    }
+
+    return () => el.removeEventListener("canplay", reveal);
+  }, []);
+
+  useEffect(() => {
+    const el = videoRef.current;
     if (!el) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          el.play().catch(() => {});
+          if (el.paused) el.play().catch(() => {});
         } else if (!el.paused) {
           el.pause();
         }
@@ -1395,6 +1415,64 @@ const ZincDesignSystemSection = () => {
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
+
+  return (
+    <PhoneShell>
+      {!error ? (
+        <video
+          ref={videoRef}
+          src={src}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          onError={() => setError(true)}
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "contain",
+            background: "#07070a",
+            opacity,
+            transition: "opacity 0.15s ease",
+            willChange: "opacity",
+            transform: "translateZ(0)",
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
+          }}
+        />
+      ) : (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "8px",
+            padding: "0 16px",
+            textAlign: "center",
+          }}
+        >
+          <span style={{ fontSize: "20px", opacity: 0.3 }}>▶</span>
+          <span
+            style={{
+              fontFamily: "'DM Mono',monospace",
+              fontSize: "10px",
+              color: C.textMeta,
+            }}
+          >
+            Could not load {src}
+          </span>
+        </div>
+      )}
+    </PhoneShell>
+  );
+};
+
+/* ═══ ZINC DESIGN SYSTEM VIDEO SECTION ═══ */
+const ZincDesignSystemSection = () => {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-8%" });
 
   return (
     <section
@@ -1423,7 +1501,7 @@ const ZincDesignSystemSection = () => {
             color: C.text,
           }}
         >
-          Zinc's Design System
+          Zinc Design System
         </h2>
       </motion.div>
 
@@ -1431,63 +1509,9 @@ const ZincDesignSystemSection = () => {
         variants={fadeUp(0.08)}
         initial="hidden"
         animate={inView ? "visible" : "hidden"}
-        style={{
-          maxWidth: "760px",
-          margin: "0 auto",
-          borderRadius: "16px",
-          overflow: "hidden",
-          border: `1px solid ${C.border}`,
-          background: "#000",
-          position: "relative",
-        }}
+        style={{ display: "flex", justifyContent: "center" }}
       >
-        {!error ? (
-          <video
-            ref={vRef}
-            src="/videos/Design_system.mp4"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            onCanPlay={() => setReady(true)}
-            onError={() => setError(true)}
-            style={{
-              width: "100%",
-              height: "auto",
-              display: "block",
-              objectFit: "contain",
-              opacity: ready ? 1 : 0,
-              transition: "opacity 0.4s",
-            }}
-          />
-        ) : (
-          <div
-            style={{
-              minHeight: "320px",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "8px",
-              color: C.textMeta,
-            }}
-          >
-            <span style={{ fontSize: "24px", opacity: 0.3 }}>▶</span>
-            <span
-              style={{
-                fontFamily: "'DM Mono',monospace",
-                fontSize: "11px",
-                textAlign: "center",
-                padding: "0 16px",
-              }}
-            >
-              Could not load /videos/Design_system.mp4 — check filename casing,
-              folder location (public/videos/), and that the format is H.264
-              MP4.
-            </span>
-          </div>
-        )}
+        <SystemPhone src="/videos/Design_system.mp4" />
       </motion.div>
     </section>
   );
@@ -1497,26 +1521,6 @@ const ZincDesignSystemSection = () => {
 const MotionSystemSection = () => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-8%" });
-  const vRef = useRef(null);
-  const [error, setError] = useState(false);
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    const el = vRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          el.play().catch(() => {});
-        } else if (!el.paused) {
-          el.pause();
-        }
-      },
-      { threshold: 0.1 },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
 
   return (
     <section
@@ -1553,63 +1557,9 @@ const MotionSystemSection = () => {
         variants={fadeUp(0.08)}
         initial="hidden"
         animate={inView ? "visible" : "hidden"}
-        style={{
-          maxWidth: "760px",
-          margin: "0 auto",
-          borderRadius: "16px",
-          overflow: "hidden",
-          border: `1px solid ${C.border}`,
-          background: "#000",
-          position: "relative",
-        }}
+        style={{ display: "flex", justifyContent: "center" }}
       >
-        {!error ? (
-          <video
-            ref={vRef}
-            src="/videos/Motion_system.mp4"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            onCanPlay={() => setReady(true)}
-            onError={() => setError(true)}
-            style={{
-              width: "100%",
-              height: "auto",
-              display: "block",
-              objectFit: "contain",
-              opacity: ready ? 1 : 0,
-              transition: "opacity 0.4s",
-            }}
-          />
-        ) : (
-          <div
-            style={{
-              minHeight: "320px",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "8px",
-              color: C.textMeta,
-            }}
-          >
-            <span style={{ fontSize: "24px", opacity: 0.3 }}>▶</span>
-            <span
-              style={{
-                fontFamily: "'DM Mono',monospace",
-                fontSize: "11px",
-                textAlign: "center",
-                padding: "0 16px",
-              }}
-            >
-              Could not load /videos/Motion_system.mp4 — check filename casing,
-              folder location (public/videos/), and that the format is H.264
-              MP4.
-            </span>
-          </div>
-        )}
+        <SystemPhone src="/videos/Motion_system.mp4" />
       </motion.div>
     </section>
   );
