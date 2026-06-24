@@ -1449,7 +1449,7 @@ const ZincDesignSystemSection = () => {
             muted
             loop
             playsInline
-            preload="metadata"
+            preload="auto"
             onCanPlay={() => setReady(true)}
             onError={() => setError(true)}
             style={{
@@ -1571,7 +1571,7 @@ const MotionSystemSection = () => {
             muted
             loop
             playsInline
-            preload="metadata"
+            preload="auto"
             onCanPlay={() => setReady(true)}
             onError={() => setError(true)}
             style={{
