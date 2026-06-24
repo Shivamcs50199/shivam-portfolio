@@ -236,13 +236,17 @@ const TabBtn = ({ label, active, onClick }) => (
       fontFamily: "'DM Mono',monospace",
       fontSize: "12px",
       letterSpacing: "0.05em",
-      padding: "10px 20px",
+      padding: "10px 24px",
       borderRadius: "6px",
-      border: `1.5px solid ${active ? C.borderHi : C.border}`,
-      background: active ? C.raised : "transparent",
-      color: active ? C.text : C.textSub,
+      border: `1.5px solid ${active ? "rgba(255,255,255,0.9)" : C.border}`,
+      background: active ? "rgba(255,255,255,0.12)" : "transparent",
+      color: active ? "#ffffff" : C.textSub,
       transition: "all 0.2s",
-      fontWeight: active ? 500 : 400,
+      fontWeight: active ? 600 : 400,
+      cursor: "pointer",
+      boxShadow: active
+        ? "0 0 0 1px rgba(255,255,255,0.15), inset 0 1px 0 rgba(255,255,255,0.15)"
+        : "none",
     }}
   >
     {label}
@@ -628,7 +632,9 @@ const Hero = () => {
             marginBottom: "12px",
           }}
         >
-          <BtnPrimary href="#zinc">View ZINC →</BtnPrimary>
+          <BtnPrimary href="https://www.behance.net/gallery/251586725/Case-Study-Zinc-Finance-App">
+            View ZINC →
+          </BtnPrimary>
           <BtnOutline href="#contact">Get in Touch</BtnOutline>
         </motion.div>
 

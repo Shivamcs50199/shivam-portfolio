@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Particles, { ParticlesProvider } from "@tsparticles/react";
 import { loadSlim } from "@tsparticles/slim";
 import { loadTextShape } from "@tsparticles/shape-text";
@@ -9,7 +9,7 @@ const CODE_GLYPHS = [
   "<>",
   "{}",
   "//",
-  "===",
+  "01",
   "/*",
   "*/",
   "=>",
@@ -18,7 +18,7 @@ const CODE_GLYPHS = [
   ";:",
   "&&",
   "||",
-  "!=",
+  "===",
   "+=",
 ];
 
@@ -58,7 +58,7 @@ const options = {
       options: {
         text: {
           value: CODE_GLYPHS,
-          font: "'Fira Code', 'JetBrains Mono', 'Courier New', monospace",
+          font: "'Fira Code', 'Courier New', monospace",
           style: "",
           weight: "400",
           fill: true,
@@ -70,7 +70,7 @@ const options = {
       animation: { enable: true, speed: 0.35, sync: false },
     },
     size: {
-      value: { min: 12, max: 28 },
+      value: { min: 12, max: 25 },
       animation: { enable: true, speed: 0.6, sync: false },
     },
     move: {
@@ -81,20 +81,12 @@ const options = {
       straight: false,
       outModes: { default: "out" },
       gravity: { enable: true, acceleration: -0.018, maxSpeed: 0.5 },
-      drift: 0,
-      warp: false,
       attract: { enable: false },
     },
     rotate: {
       value: { min: 0, max: 360 },
       direction: "random",
       animation: { enable: true, speed: 0.4, sync: false },
-    },
-    tilt: {
-      enable: true,
-      value: { min: 0, max: 30 },
-      direction: "random",
-      animation: { enable: true, speed: 0.3, sync: false },
     },
     links: { enable: false },
     collisions: { enable: false },
@@ -103,8 +95,49 @@ const options = {
   smooth: true,
 };
 
+// Splash shown while tsparticles loads in background
+function LoadingSplash({ visible }) {
+  return (
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 9999,
+        background: "#050810",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        opacity: visible ? 1 : 0,
+        pointerEvents: visible ? "all" : "none",
+        transition: "opacity 0.6s ease",
+      }}
+    >
+      {/* Three drifting dots — minimal, premium */}
+      <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+        {[0, 1, 2].map((i) => (
+          <div
+            key={i}
+            style={{
+              width: "6px",
+              height: "6px",
+              borderRadius: "50%",
+              background: "#8891b8",
+              animation: `splashDot 1.2s ease-in-out ${i * 0.2}s infinite`,
+            }}
+          />
+        ))}
+      </div>
+      <style>{`
+        @keyframes splashDot {
+          0%, 100% { opacity: 0.2; transform: translateY(0); }
+          50%       { opacity: 1;   transform: translateY(-6px); }
+        }
+      `}</style>
+    </div>
+  );
+}
+
 function ParticlesInner() {
-  console.log("ParticlesInner render");
   const scrollVelRef = useRef(0);
   const lastScrollY = useRef(0);
 
@@ -146,20 +179,21 @@ function ParticlesInner() {
 }
 
 export default function ParticleBackground() {
-  console.log("ParticleBackground render");
+  const [splashVisible, setSplashVisible] = useState(true);
+
   const initEngine = useCallback(async (engine) => {
-    console.log("initEngine called");
-    console.time("loadSlim");
     await loadSlim(engine);
-    console.timeEnd("loadSlim");
-    console.log("loadSlim done");
     await loadTextShape(engine);
-    console.log("loadTextShape done");
+    // Particles are ready — fade out the splash
+    setSplashVisible(false);
   }, []);
 
   return (
-    <ParticlesProvider init={initEngine}>
-      <ParticlesInner />
-    </ParticlesProvider>
+    <>
+      <LoadingSplash visible={splashVisible} />
+      <ParticlesProvider init={initEngine}>
+        <ParticlesInner />
+      </ParticlesProvider>
+    </>
   );
 }
