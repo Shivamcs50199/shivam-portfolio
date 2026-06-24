@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
+import ParticleBackground from "./ParticleBackground";
 
 const C = {
   bg: "#09090b",
@@ -2553,6 +2554,7 @@ export default function App() {
   return (
     <>
       <GlobalStyles />
+      <ParticleBackground />
       <Nav />
       <main>
         <Hero />
