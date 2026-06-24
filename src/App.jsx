@@ -69,7 +69,8 @@ const GlobalStyles = () => (
       .mob-menu   { display: flex !important; }
       .section-pad { padding: 80px 32px !important; }
       .hero-pad    { padding: 100px 32px 60px !important; }
-      .zinc-phone-col { justify-content: flex-start !important; }
+      .zinc-phone-col { justify-content: center !important; }
+.zinc-left-col  { margin-left: auto !important; margin-right: auto !important; }
       .stats-row { gap: 28px !important; }
       .contact-footer { flex-direction: column !important; align-items: flex-start !important; }
       .resume-row { flex-direction: column !important; gap: 24px !important; align-items: flex-start !important; }
@@ -988,14 +989,6 @@ const ZincSection = () => {
       }}
     >
       <div style={{ maxWidth: "1160px", margin: "0 auto" }}>
-        <motion.div
-          variants={fadeUp(0)}
-          initial="hidden"
-          animate={inView ? "visible" : "hidden"}
-        >
-          <SectionLabel>Featured Project</SectionLabel>
-        </motion.div>
-
         <div
           className="zinc-grid"
           style={{
@@ -1014,9 +1007,13 @@ const ZincSection = () => {
               flexDirection: "column",
               alignItems: "center",
               maxWidth: "560px",
-              marginLeft: "0",
+              marginLeft: "auto",
+              marginRight: "auto",
             }}
           >
+            <SectionLabel style={{ textAlign: "center", marginBottom: "32px" }}>
+              Featured Project
+            </SectionLabel>
             <h2
               style={{
                 fontFamily: "'Sora',sans-serif",
@@ -1039,6 +1036,7 @@ const ZincSection = () => {
                 color: C.textSub,
                 maxWidth: "480px",
                 marginBottom: "44px",
+                textAlign: "center",
               }}
             >
               ZINC started with a problem I was facing myself, forgotten
@@ -1078,6 +1076,7 @@ const ZincSection = () => {
                 fontSize: "13px",
                 color: C.textMeta,
                 marginBottom: "12px",
+                textAlign: "center",
               }}
             >
               Preview a screen:
@@ -1115,6 +1114,7 @@ const ZincSection = () => {
                   color: C.textSub,
                   lineHeight: 1.7,
                   maxWidth: "420px",
+                  textAlign: "center",
                 }}
               >
                 {tabs.find((t) => t.id === tab)?.desc}
@@ -1214,20 +1214,12 @@ const OnboardingSection = () => {
       ref={ref}
       className="section-pad"
       style={{
-        padding: "120px 48px",
+        padding: "120px 180px",
         background: C.bg,
         borderTop: `1px solid ${C.border}`,
       }}
     >
       <div style={{ maxWidth: "1160px", margin: "0 auto" }}>
-        <motion.div
-          variants={fadeUp(0)}
-          initial="hidden"
-          animate={inView ? "visible" : "hidden"}
-        >
-          <SectionLabel>ZINC — Onboarding</SectionLabel>
-        </motion.div>
-
         <div
           className="zinc-grid"
           style={{
@@ -1246,9 +1238,13 @@ const OnboardingSection = () => {
               flexDirection: "column",
               alignItems: "center",
               maxWidth: "560px",
-              marginLeft: "0",
+              marginLeft: "auto",
+              marginRight: "auto",
             }}
           >
+            <SectionLabel style={{ textAlign: "center", marginBottom: "32px" }}>
+              ZINC — Onboarding
+            </SectionLabel>
             <h2
               style={{
                 fontFamily: "'Sora',sans-serif",
@@ -1271,6 +1267,7 @@ const OnboardingSection = () => {
                 color: C.textSub,
                 maxWidth: "480px",
                 marginBottom: "44px",
+                textAlign: "center",
               }}
             >
               The onboarding was designed to build understanding before trust. I
@@ -1307,6 +1304,7 @@ const OnboardingSection = () => {
                 fontSize: "13px",
                 color: C.textMeta,
                 marginBottom: "12px",
+                textAlign: "center",
               }}
             >
               Preview a step:
@@ -1344,6 +1342,7 @@ const OnboardingSection = () => {
                   color: C.textSub,
                   lineHeight: 1.7,
                   maxWidth: "420px",
+                  textAlign: "center",
                 }}
               >
                 {steps.find((s) => s.id === tab)?.desc}
@@ -1368,6 +1367,226 @@ const OnboardingSection = () => {
           </motion.div>
         </div>
       </div>
+    </section>
+  );
+};
+
+/* ═══ ZINC DESIGN SYSTEM VIDEO SECTION ═══ */
+const ZincDesignSystemSection = () => {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-8%" });
+  const vRef = useRef(null);
+  const [error, setError] = useState(false);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    if (!vRef.current) return;
+    vRef.current.play().catch(() => {});
+  }, []);
+
+  return (
+    <section
+      id="zinc-design-system"
+      ref={ref}
+      className="section-pad"
+      style={{
+        padding: "120px 48px",
+        background: C.surface,
+        borderTop: `1px solid ${C.border}`,
+      }}
+    >
+      <motion.div
+        variants={fadeUp(0)}
+        initial="hidden"
+        animate={inView ? "visible" : "hidden"}
+        style={{ textAlign: "center", marginBottom: "48px" }}
+      >
+        <h2
+          style={{
+            fontFamily: "'Sora',sans-serif",
+            fontSize: "clamp(28px,5vw,56px)",
+            fontWeight: 600,
+            letterSpacing: "-0.04em",
+            lineHeight: 1.1,
+            color: C.text,
+          }}
+        >
+          Zinc Design System
+        </h2>
+      </motion.div>
+
+      <motion.div
+        variants={fadeUp(0.08)}
+        initial="hidden"
+        animate={inView ? "visible" : "hidden"}
+        style={{
+          maxWidth: "760px",
+          margin: "0 auto",
+          borderRadius: "16px",
+          overflow: "hidden",
+          border: `1px solid ${C.border}`,
+          background: "#000",
+          position: "relative",
+        }}
+      >
+        {!error ? (
+          <video
+            ref={vRef}
+            src="/videos/Design_system.mp4"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            onCanPlay={() => setReady(true)}
+            onError={() => setError(true)}
+            style={{
+              width: "100%",
+              height: "auto",
+              display: "block",
+              objectFit: "contain",
+              opacity: ready ? 1 : 0,
+              transition: "opacity 0.4s",
+            }}
+          />
+        ) : (
+          <div
+            style={{
+              minHeight: "320px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "8px",
+              color: C.textMeta,
+            }}
+          >
+            <span style={{ fontSize: "24px", opacity: 0.3 }}>▶</span>
+            <span
+              style={{
+                fontFamily: "'DM Mono',monospace",
+                fontSize: "11px",
+                textAlign: "center",
+                padding: "0 16px",
+              }}
+            >
+              Could not load /videos/Design_system.mp4 — check filename casing,
+              folder location (public/videos/), and that the format is H.264
+              MP4.
+            </span>
+          </div>
+        )}
+      </motion.div>
+    </section>
+  );
+};
+
+/* ═══ MOTION SYSTEM VIDEO SECTION ═══ */
+const MotionSystemSection = () => {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-8%" });
+  const vRef = useRef(null);
+  const [error, setError] = useState(false);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    if (!vRef.current) return;
+    vRef.current.play().catch(() => {});
+  }, []);
+
+  return (
+    <section
+      id="motion-system"
+      ref={ref}
+      className="section-pad"
+      style={{
+        padding: "120px 48px",
+        background: C.bg,
+        borderTop: `1px solid ${C.border}`,
+      }}
+    >
+      <motion.div
+        variants={fadeUp(0)}
+        initial="hidden"
+        animate={inView ? "visible" : "hidden"}
+        style={{ textAlign: "center", marginBottom: "48px" }}
+      >
+        <h2
+          style={{
+            fontFamily: "'Sora',sans-serif",
+            fontSize: "clamp(28px,5vw,56px)",
+            fontWeight: 600,
+            letterSpacing: "-0.04em",
+            lineHeight: 1.1,
+            color: C.text,
+          }}
+        >
+          Motion System
+        </h2>
+      </motion.div>
+
+      <motion.div
+        variants={fadeUp(0.08)}
+        initial="hidden"
+        animate={inView ? "visible" : "hidden"}
+        style={{
+          maxWidth: "760px",
+          margin: "0 auto",
+          borderRadius: "16px",
+          overflow: "hidden",
+          border: `1px solid ${C.border}`,
+          background: "#000",
+          position: "relative",
+        }}
+      >
+        {!error ? (
+          <video
+            ref={vRef}
+            src="/videos/Motion_system.mp4"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            onCanPlay={() => setReady(true)}
+            onError={() => setError(true)}
+            style={{
+              width: "100%",
+              height: "auto",
+              display: "block",
+              objectFit: "contain",
+              opacity: ready ? 1 : 0,
+              transition: "opacity 0.4s",
+            }}
+          />
+        ) : (
+          <div
+            style={{
+              minHeight: "320px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "8px",
+              color: C.textMeta,
+            }}
+          >
+            <span style={{ fontSize: "24px", opacity: 0.3 }}>▶</span>
+            <span
+              style={{
+                fontFamily: "'DM Mono',monospace",
+                fontSize: "11px",
+                textAlign: "center",
+                padding: "0 16px",
+              }}
+            >
+              Could not load /videos/Motion_system.mp4 — check filename casing,
+              folder location (public/videos/), and that the format is H.264
+              MP4.
+            </span>
+          </div>
+        )}
+      </motion.div>
     </section>
   );
 };
@@ -1460,14 +1679,6 @@ const SecondSection = () => {
       }}
     >
       <div style={{ maxWidth: "1160px", margin: "0 auto" }}>
-        <motion.div
-          variants={fadeUp(0)}
-          initial="hidden"
-          animate={inView ? "visible" : "hidden"}
-        >
-          <SectionLabel>Emotional Release Through Space Ritual</SectionLabel>
-        </motion.div>
-
         <div
           className="zinc-grid"
           style={{
@@ -1486,9 +1697,13 @@ const SecondSection = () => {
               flexDirection: "column",
               alignItems: "center",
               maxWidth: "560px",
-              marginLeft: "0",
+              marginLeft: "auto",
+              marginRight: "auto",
             }}
           >
+            <SectionLabel style={{ textAlign: "center", marginBottom: "32px" }}>
+              Emotional Release Through Space Ritual
+            </SectionLabel>
             <h2
               style={{
                 fontFamily: "'Sora',sans-serif",
@@ -1511,6 +1726,7 @@ const SecondSection = () => {
                 color: C.textSub,
                 maxWidth: "480px",
                 marginBottom: "44px",
+                textAlign: "center",
               }}
             >
               An experimental wellbeing experience that transforms emotional
@@ -1545,6 +1761,7 @@ const SecondSection = () => {
                 fontSize: "13px",
                 color: C.textMeta,
                 marginBottom: "12px",
+                textAlign: "center",
               }}
             >
               Preview:
@@ -1569,6 +1786,7 @@ const SecondSection = () => {
                 color: C.textSub,
                 lineHeight: 1.7,
                 maxWidth: "420px",
+                textAlign: "center",
               }}
             >
               An experimental motion concept exploring emotional ritual through
@@ -2566,6 +2784,8 @@ export default function App() {
         <Hero />
         <ZincSection />
         <OnboardingSection />
+        <ZincDesignSystemSection />
+        <MotionSystemSection />
         <SecondSection />
         <WhyGluattaSection />
         <GluattaVideoSection />
