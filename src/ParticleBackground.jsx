@@ -9,16 +9,16 @@ const CODE_GLYPHS = [
   "<>",
   "{}",
   "//",
-  "01",
+  "Aa",
   "/*",
   "*/",
   "=>",
   "[]",
   "()",
-  ";:",
+  ";;",
   "&&",
   "||",
-  "===",
+  "!=",
   "+=",
 ];
 
@@ -66,7 +66,7 @@ const options = {
       },
     },
     opacity: {
-      value: { min: 0.25, max: 0.6 },
+      value: { min: 0.25, max: 0.7 },
       animation: { enable: true, speed: 0.35, sync: false },
     },
     size: {
@@ -95,7 +95,6 @@ const options = {
   smooth: true,
 };
 
-// Splash shown while tsparticles loads in background
 function LoadingSplash({ visible }) {
   return (
     <div
@@ -107,12 +106,13 @@ function LoadingSplash({ visible }) {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        // Only start fading AFTER visible goes false
         opacity: visible ? 1 : 0,
+        // pointer-events off immediately so UI is clickable during fade
         pointerEvents: visible ? "all" : "none",
-        transition: "opacity 0.6s ease",
+        transition: "opacity 0.5s ease",
       }}
     >
-      {/* Three drifting dots — minimal, premium */}
       <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
         {[0, 1, 2].map((i) => (
           <div
@@ -137,7 +137,7 @@ function LoadingSplash({ visible }) {
   );
 }
 
-function ParticlesInner() {
+function ParticlesInner({ onReady }) {
   const scrollVelRef = useRef(0);
   const lastScrollY = useRef(0);
 
@@ -164,10 +164,17 @@ function ParticlesInner() {
     };
   }, []);
 
+  // particlesLoaded fires when tsparticles has actually painted
+  // the first frame — this is the true "ready" signal
+  const handleParticlesLoaded = useCallback(async () => {
+    onReady();
+  }, [onReady]);
+
   return (
     <Particles
       id="code-particles"
       options={options}
+      particlesLoaded={handleParticlesLoaded}
       style={{
         position: "fixed",
         inset: 0,
@@ -182,9 +189,15 @@ export default function ParticleBackground() {
   const [splashVisible, setSplashVisible] = useState(true);
 
   const initEngine = useCallback(async (engine) => {
+    // Engine plugin registration — NOT the ready signal
     await loadSlim(engine);
     await loadTextShape(engine);
-    // Particles are ready — fade out the splash
+    // Do NOT hide splash here — particles aren't painted yet at this point
+  }, []);
+
+  const handleParticlesReady = useCallback(() => {
+    // This fires when the first frame is actually drawn on screen
+    // This is the correct moment to hide the splash
     setSplashVisible(false);
   }, []);
 
@@ -192,7 +205,7 @@ export default function ParticleBackground() {
     <>
       <LoadingSplash visible={splashVisible} />
       <ParticlesProvider init={initEngine}>
-        <ParticlesInner />
+        <ParticlesInner onReady={handleParticlesReady} />
       </ParticlesProvider>
     </>
   );
