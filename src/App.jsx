@@ -505,7 +505,7 @@ const Nav = () => {
 /* ═══ HERO ═══ */
 const Hero = () => {
   const typed = useTypewriter([
-    "Design Systems.",
+    "Interfaces.",
     "Digital Products.",
     "Product Engineering.",
   ]);
@@ -580,6 +580,7 @@ const Hero = () => {
           initial="hidden"
           animate={inView ? "visible" : "hidden"}
           style={{
+            marginTop: "12px",
             fontFamily: "'Sora',sans-serif",
             fontSize: "clamp(20px,6.5vw,88px)",
             fontWeight: 600,
@@ -617,8 +618,8 @@ const Hero = () => {
             marginBottom: "64px",
           }}
         >
-          Design. Code. Ship. Built ZINC. Building Gluata. React Native •
-          Product Design • Motion
+          Design. Code. Ship. Shipped ZINC App. Software Interfaces. React.
+          React Native • Product Design • Motion
         </motion.p>
 
         <motion.div

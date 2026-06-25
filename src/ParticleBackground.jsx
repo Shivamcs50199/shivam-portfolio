@@ -66,7 +66,7 @@ const options = {
       },
     },
     opacity: {
-      value: { min: 0.25, max: 0.7 },
+      value: { min: 0.25, max: 0.6 },
       animation: { enable: true, speed: 0.35, sync: false },
     },
     size: {
