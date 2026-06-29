@@ -17,6 +17,43 @@ const C = {
   ease: [0.22, 1, 0.36, 1],
 };
 
+// Premium easing for scroll-reveal (no bounce, cinematic)
+const REVEAL_EASE = [0.25, 0.46, 0.45, 0.94];
+
+// Core scroll-reveal variant factory
+// label → heading → paragraph stagger: 0ms, 120ms, 240ms
+const revealVariants = (delay = 0) => ({
+  hidden: {
+    opacity: 0,
+    y: 18,
+    filter: "blur(2px)",
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: {
+      duration: 0.65,
+      delay,
+      ease: REVEAL_EASE,
+    },
+  },
+});
+
+// Convenience wrapper: animates once when entering viewport
+const Reveal = ({ children, delay = 0, style, className }) => (
+  <motion.div
+    variants={revealVariants(delay)}
+    initial="hidden"
+    whileInView="visible"
+    viewport={{ once: true, margin: "-6%" }}
+    style={{ willChange: "transform, opacity", ...style }}
+    className={className}
+  >
+    {children}
+  </motion.div>
+);
+
 const RESUME_PATH = "/resume/Shivam_Kumar_Resume.pdf";
 
 const GlobalStyles = () => (
@@ -51,6 +88,10 @@ const GlobalStyles = () => (
     @keyframes shimmer {
       0%{background-position:200% 0}
       100%{background-position:-200% 0}
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
     }
 
     .nav-links  { display: flex !important; }
@@ -512,6 +553,17 @@ const Hero = () => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
 
+  // Hero-specific reveal: cinematic, restrained stagger
+  const heroReveal = (delay = 0) => ({
+    hidden: { opacity: 0, y: 18, filter: "blur(2px)" },
+    visible: {
+      opacity: 1,
+      y: 0,
+      filter: "blur(0px)",
+      transition: { duration: 0.65, delay, ease: REVEAL_EASE },
+    },
+  });
+
   return (
     <section
       id="top"
@@ -526,6 +578,7 @@ const Hero = () => {
       }}
     >
       <div style={{ maxWidth: "780px" }}>
+        {/* Status badge — existing animation preserved */}
         <motion.div
           variants={fadeUp(0)}
           initial="hidden"
@@ -558,8 +611,9 @@ const Hero = () => {
           </span>
         </motion.div>
 
+        {/* "I design and build" — hero heading line 1 */}
         <motion.h1
-          variants={fadeUp(0.07)}
+          variants={heroReveal(0.05)}
           initial="hidden"
           animate={inView ? "visible" : "hidden"}
           style={{
@@ -570,13 +624,15 @@ const Hero = () => {
             lineHeight: 1.0,
             color: C.text,
             textAlign: "left",
+            willChange: "transform, opacity",
           }}
         >
           I design and build
         </motion.h1>
 
+        {/* Typewriter line — hero heading line 2, reveals 150ms after line 1 */}
         <motion.div
-          variants={fadeUp(0.12)}
+          variants={heroReveal(0.2)}
           initial="hidden"
           animate={inView ? "visible" : "hidden"}
           style={{
@@ -591,6 +647,7 @@ const Hero = () => {
             minHeight: "1.05em",
             wordBreak: "break-word",
             textAlign: "left",
+            willChange: "transform, opacity",
           }}
         >
           {typed}
@@ -605,8 +662,9 @@ const Hero = () => {
           </span>
         </motion.div>
 
+        {/* Supporting paragraph — fades in 120ms after typewriter line */}
         <motion.p
-          variants={fadeUp(0.17)}
+          variants={heroReveal(0.34)}
           initial="hidden"
           animate={inView ? "visible" : "hidden"}
           style={{
@@ -616,6 +674,7 @@ const Hero = () => {
             lineHeight: 1.65,
             fontWeight: 400,
             marginBottom: "64px",
+            willChange: "transform, opacity",
           }}
         >
           Design. Code. Ship. Shipped ZINC App. Software Interfaces. React.
@@ -1012,10 +1071,28 @@ const ZincSection = () => {
               marginRight: "auto",
             }}
           >
-            <SectionLabel style={{ textAlign: "center", marginBottom: "32px" }}>
-              Featured Project
-            </SectionLabel>
-            <h2
+            {/* Label → Heading → Paragraph stagger */}
+            <motion.div
+              variants={revealVariants(0)}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-6%" }}
+              style={{
+                willChange: "transform, opacity",
+                textAlign: "center",
+                marginBottom: "32px",
+              }}
+            >
+              <SectionLabel style={{ textAlign: "center", marginBottom: 0 }}>
+                Featured Project
+              </SectionLabel>
+            </motion.div>
+
+            <motion.h2
+              variants={revealVariants(0.12)}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-6%" }}
               style={{
                 fontFamily: "'Sora',sans-serif",
                 fontSize: "clamp(64px,10vw,120px)",
@@ -1026,11 +1103,17 @@ const ZincSection = () => {
                 marginBottom: "28px",
                 textAlign: "center",
                 width: "100%",
+                willChange: "transform, opacity",
               }}
             >
               ZINC
-            </h2>
-            <p
+            </motion.h2>
+
+            <motion.p
+              variants={revealVariants(0.24)}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-6%" }}
               style={{
                 fontSize: "17px",
                 lineHeight: 1.8,
@@ -1038,10 +1121,11 @@ const ZincSection = () => {
                 maxWidth: "480px",
                 marginBottom: "44px",
                 textAlign: "center",
+                willChange: "transform, opacity",
               }}
             >
               A subscription tracking app built from scratch
-            </p>
+            </motion.p>
 
             <div
               className="chip-row"
@@ -1237,10 +1321,28 @@ const OnboardingSection = () => {
               marginRight: "auto",
             }}
           >
-            <SectionLabel style={{ textAlign: "center", marginBottom: "32px" }}>
-              ZINC — Onboarding
-            </SectionLabel>
-            <h2
+            {/* Label → Heading → Paragraph stagger */}
+            <motion.div
+              variants={revealVariants(0)}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-6%" }}
+              style={{
+                willChange: "transform, opacity",
+                textAlign: "center",
+                marginBottom: "32px",
+              }}
+            >
+              <SectionLabel style={{ textAlign: "center", marginBottom: 0 }}>
+                ZINC — Onboarding
+              </SectionLabel>
+            </motion.div>
+
+            <motion.h2
+              variants={revealVariants(0.12)}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-6%" }}
               style={{
                 fontFamily: "'Sora',sans-serif",
                 fontSize: "clamp(32px,5vw,64px)",
@@ -1251,11 +1353,17 @@ const OnboardingSection = () => {
                 marginBottom: "28px",
                 textAlign: "center",
                 width: "100%",
+                willChange: "transform, opacity",
               }}
             >
               Onboarding
-            </h2>
-            <p
+            </motion.h2>
+
+            <motion.p
+              variants={revealVariants(0.24)}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-6%" }}
               style={{
                 fontSize: "17px",
                 lineHeight: 1.8,
@@ -1263,11 +1371,12 @@ const OnboardingSection = () => {
                 maxWidth: "480px",
                 marginBottom: "44px",
                 textAlign: "center",
+                willChange: "transform, opacity",
               }}
             >
               A motion driven onboarding flow designed to build trust and guide
               users through their first experience with minimal friction.
-            </p>
+            </motion.p>
 
             <div
               className="chip-row"
@@ -1400,13 +1509,12 @@ const ZincDesignSystemSection = () => {
         position: "relative",
       }}
     >
-      {/* Ambient scrim — particle glyphs bleed through as subtle depth */}
       <div
         style={{
           position: "absolute",
           inset: 0,
-          background: "rgba(9,9,11,0.65)",
-          backdropFilter: "blur(2px)",
+          background: "rgba(9,9,11,0.55)",
+          backdropFilter: "blur(.5px)",
           WebkitBackdropFilter: "blur(2px)",
           pointerEvents: "none",
           zIndex: 0,
@@ -1424,7 +1532,12 @@ const ZincDesignSystemSection = () => {
           zIndex: 1,
         }}
       >
-        <h2
+        {/* Label not present in original — heading only with scroll reveal */}
+        <motion.h2
+          variants={revealVariants(0)}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-6%" }}
           style={{
             fontFamily: "'Sora',sans-serif",
             fontSize: "clamp(28px,5vw,56px)",
@@ -1432,10 +1545,11 @@ const ZincDesignSystemSection = () => {
             letterSpacing: "-0.04em",
             lineHeight: 1.1,
             color: C.text,
+            willChange: "transform, opacity",
           }}
         >
           Zinc's Design System
-        </h2>
+        </motion.h2>
       </motion.div>
 
       <motion.div
@@ -1542,13 +1656,12 @@ const MotionSystemSection = () => {
         position: "relative",
       }}
     >
-      {/* Ambient scrim — particle glyphs bleed through as subtle depth */}
       <div
         style={{
           position: "absolute",
           inset: 0,
-          background: "rgba(9,9,11,0.85)",
-          backdropFilter: "blur(2px)",
+          background: "rgba(9,9,11,0.55)",
+          backdropFilter: "blur(.5px)",
           WebkitBackdropFilter: "blur(2px)",
           pointerEvents: "none",
           zIndex: 0,
@@ -1566,7 +1679,11 @@ const MotionSystemSection = () => {
           zIndex: 1,
         }}
       >
-        <h2
+        <motion.h2
+          variants={revealVariants(0)}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-6%" }}
           style={{
             fontFamily: "'Sora',sans-serif",
             fontSize: "clamp(28px,5vw,56px)",
@@ -1574,10 +1691,11 @@ const MotionSystemSection = () => {
             letterSpacing: "-0.04em",
             lineHeight: 1.1,
             color: C.text,
+            willChange: "transform, opacity",
           }}
         >
           Motion System
-        </h2>
+        </motion.h2>
       </motion.div>
 
       <motion.div
@@ -1757,10 +1875,28 @@ const SecondSection = () => {
               marginRight: "auto",
             }}
           >
-            <SectionLabel style={{ textAlign: "center", marginBottom: "32px" }}>
-              Emotional Release Through Space Ritual
-            </SectionLabel>
-            <h2
+            {/* Label → Heading → Paragraph stagger */}
+            <motion.div
+              variants={revealVariants(0)}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-6%" }}
+              style={{
+                willChange: "transform, opacity",
+                textAlign: "center",
+                marginBottom: "32px",
+              }}
+            >
+              <SectionLabel style={{ textAlign: "center", marginBottom: 0 }}>
+                Emotional Release Through Space Ritual
+              </SectionLabel>
+            </motion.div>
+
+            <motion.h2
+              variants={revealVariants(0.12)}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-6%" }}
               style={{
                 fontFamily: "'Sora',sans-serif",
                 fontSize: "clamp(32px,5vw,64px)",
@@ -1771,11 +1907,17 @@ const SecondSection = () => {
                 marginBottom: "28px",
                 textAlign: "center",
                 width: "100%",
+                willChange: "transform, opacity",
               }}
             >
               Gluata
-            </h2>
-            <p
+            </motion.h2>
+
+            <motion.p
+              variants={revealVariants(0.24)}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-6%" }}
               style={{
                 fontSize: "17px",
                 lineHeight: 1.8,
@@ -1783,12 +1925,13 @@ const SecondSection = () => {
                 maxWidth: "480px",
                 marginBottom: "44px",
                 textAlign: "center",
+                willChange: "transform, opacity",
               }}
             >
               An experimental wellbeing experience that transforms emotional
               release into a cinematic space ritual through motion, interaction,
               and storytelling.
-            </p>
+            </motion.p>
 
             <div
               className="chip-row"
@@ -1897,28 +2040,55 @@ const WhyGluattaSection = () => {
       }}
     >
       <div style={{ maxWidth: "760px", margin: "0 auto" }}>
+        {/* Label → Heading stagger, then first paragraph */}
         <motion.div
-          variants={fadeUp(0)}
+          variants={revealVariants(0)}
           initial="hidden"
-          animate={inView ? "visible" : "hidden"}
+          whileInView="visible"
+          viewport={{ once: true, margin: "-6%" }}
+          style={{ willChange: "transform, opacity" }}
         >
           <SectionLabel>Gluatta — Why I Built This</SectionLabel>
-          <h2
-            style={{
-              fontFamily: "'Sora',sans-serif",
-              fontSize: "clamp(28px,5vw,56px)",
-              fontWeight: 600,
-              letterSpacing: "-0.04em",
-              lineHeight: 1.1,
-              color: C.text,
-              marginBottom: "36px",
-            }}
-          >
-            Why I Built Gluata
-          </h2>
         </motion.div>
 
-        {paragraphs.map((p, i) => (
+        <motion.h2
+          variants={revealVariants(0.12)}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-6%" }}
+          style={{
+            fontFamily: "'Sora',sans-serif",
+            fontSize: "clamp(28px,5vw,56px)",
+            fontWeight: 600,
+            letterSpacing: "-0.04em",
+            lineHeight: 1.1,
+            color: C.text,
+            marginBottom: "36px",
+            willChange: "transform, opacity",
+          }}
+        >
+          Why I Built Gluata
+        </motion.h2>
+
+        {/* First paragraph gets the third stagger step */}
+        <motion.p
+          variants={revealVariants(0.24)}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-6%" }}
+          style={{
+            fontSize: "17px",
+            lineHeight: 1.85,
+            color: C.textSub,
+            marginBottom: "20px",
+            willChange: "transform, opacity",
+          }}
+        >
+          {paragraphs[0]}
+        </motion.p>
+
+        {/* Remaining paragraphs — no scroll-reveal per spec */}
+        {paragraphs.slice(1).map((p, i) => (
           <motion.p
             key={i}
             variants={fadeUp(0.04 * (i + 1))}
@@ -2097,8 +2267,21 @@ const CaseStudy = () => {
           }}
         >
           <div>
-            <SectionLabel>ZINC — Case Study</SectionLabel>
-            <h2
+            {/* Label → Heading stagger */}
+            <motion.div
+              variants={revealVariants(0)}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-6%" }}
+              style={{ willChange: "transform, opacity" }}
+            >
+              <SectionLabel>ZINC — Case Study</SectionLabel>
+            </motion.div>
+            <motion.h2
+              variants={revealVariants(0.12)}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-6%" }}
               style={{
                 fontFamily: "'Sora',sans-serif",
                 fontSize: "clamp(22px,3.5vw,42px)",
@@ -2107,10 +2290,11 @@ const CaseStudy = () => {
                 lineHeight: 1.15,
                 color: C.text,
                 maxWidth: "520px",
+                willChange: "transform, opacity",
               }}
             >
               Designed, built, and shipped — one decision at a time.
-            </h2>
+            </motion.h2>
           </div>
           <BtnOutline
             href="https://www.behance.net/gallery/251586725/Case-Study-Zinc-Finance-App"
@@ -2456,8 +2640,21 @@ const MotionWork = () => {
           }}
         >
           <div>
-            <SectionLabel>Motion Work</SectionLabel>
-            <h2
+            {/* Label → Heading stagger */}
+            <motion.div
+              variants={revealVariants(0)}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-6%" }}
+              style={{ willChange: "transform, opacity" }}
+            >
+              <SectionLabel>Motion Work</SectionLabel>
+            </motion.div>
+            <motion.h2
+              variants={revealVariants(0.12)}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-6%" }}
               style={{
                 fontFamily: "'Sora',sans-serif",
                 fontSize: "clamp(22px,3.5vw,42px)",
@@ -2465,10 +2662,11 @@ const MotionWork = () => {
                 letterSpacing: "-0.03em",
                 lineHeight: 1.15,
                 color: C.text,
+                willChange: "transform, opacity",
               }}
             >
               7 years of making things move.
-            </h2>
+            </motion.h2>
           </div>
           <BtnOutline
             href="https://www.behance.net/shivam_kuma"
@@ -2536,8 +2734,21 @@ const ResumeSection = () => {
             animate={inView ? "visible" : "hidden"}
             style={{ maxWidth: "520px" }}
           >
-            <SectionLabel>Resume</SectionLabel>
-            <h2
+            {/* Label → Heading stagger */}
+            <motion.div
+              variants={revealVariants(0)}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-6%" }}
+              style={{ willChange: "transform, opacity" }}
+            >
+              <SectionLabel>Resume</SectionLabel>
+            </motion.div>
+            <motion.h2
+              variants={revealVariants(0.12)}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-6%" }}
               style={{
                 fontFamily: "'Sora',sans-serif",
                 fontSize: "clamp(18px,2.8vw,32px)",
@@ -2546,16 +2757,28 @@ const ResumeSection = () => {
                 lineHeight: 1.2,
                 color: C.text,
                 marginBottom: "16px",
+                willChange: "transform, opacity",
               }}
             >
               Experience across product design, motion systems, and frontend
               engineering.
-            </h2>
-            <p style={{ fontSize: "15px", lineHeight: 1.8, color: C.textSub }}>
+            </motion.h2>
+            <motion.p
+              variants={revealVariants(0.24)}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-6%" }}
+              style={{
+                fontSize: "15px",
+                lineHeight: 1.8,
+                color: C.textSub,
+                willChange: "transform, opacity",
+              }}
+            >
               Download a detailed overview of my work at Clevertize, PlaySimple
               Games, and MPS Limited — alongside the ZINC design engineering
               project.
-            </p>
+            </motion.p>
           </motion.div>
           <motion.div
             variants={fadeUp(0.1)}
@@ -2594,7 +2817,17 @@ const About = () => {
       }}
     >
       <div style={{ maxWidth: "1160px", margin: "0 auto" }}>
-        <SectionLabel>About</SectionLabel>
+        {/* Top-level section label */}
+        <motion.div
+          variants={revealVariants(0)}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-6%" }}
+          style={{ willChange: "transform, opacity" }}
+        >
+          <SectionLabel>About</SectionLabel>
+        </motion.div>
+
         <div
           className="two-col"
           style={{
@@ -2608,7 +2841,11 @@ const About = () => {
             initial="hidden"
             animate={inView ? "visible" : "hidden"}
           >
-            <h2
+            <motion.h2
+              variants={revealVariants(0.12)}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-6%" }}
               style={{
                 fontFamily: "'Sora',sans-serif",
                 fontSize: "clamp(18px,2.6vw,32px)",
@@ -2617,27 +2854,44 @@ const About = () => {
                 lineHeight: 1.25,
                 color: C.text,
                 marginBottom: "28px",
+                willChange: "transform, opacity",
               }}
             >
               The gap between design and engineering is where good products are
               built.
-            </h2>
-            {[
-              "7 years across UI design, motion, and digital products taught me that the best interfaces feel inevitable—not designed. Today, I'm building the products I once handed off with React Native.",
-              "I care about the details where design meets engineering—motion, interaction, and performance.",
-            ].map((p, i) => (
-              <p
-                key={i}
-                style={{
-                  fontSize: "15px",
-                  lineHeight: 1.85,
-                  color: C.textSub,
-                  marginBottom: "16px",
-                }}
-              >
-                {p}
-              </p>
-            ))}
+            </motion.h2>
+
+            {/* First paragraph — third stagger step */}
+            <motion.p
+              variants={revealVariants(0.24)}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-6%" }}
+              style={{
+                fontSize: "15px",
+                lineHeight: 1.85,
+                color: C.textSub,
+                marginBottom: "16px",
+                willChange: "transform, opacity",
+              }}
+            >
+              7 years across UI design, motion, and digital products taught me
+              that the best interfaces feel inevitable—not designed. Today, I'm
+              building the products I once handed off with React Native.
+            </motion.p>
+
+            {/* Second paragraph — not scroll-revealed per spec */}
+            <p
+              style={{
+                fontSize: "15px",
+                lineHeight: 1.85,
+                color: C.textSub,
+                marginBottom: "16px",
+              }}
+            >
+              I care about the details where design meets engineering—motion,
+              interaction, and performance.
+            </p>
           </motion.div>
 
           <motion.div
@@ -2721,12 +2975,22 @@ const Contact = () => {
       }}
     >
       <div style={{ maxWidth: "720px", margin: "0 auto" }}>
-        <SectionLabel>Contact</SectionLabel>
+        {/* Label → Heading → Paragraph stagger */}
+        <motion.div
+          variants={revealVariants(0)}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-6%" }}
+          style={{ willChange: "transform, opacity" }}
+        >
+          <SectionLabel>Contact</SectionLabel>
+        </motion.div>
 
         <motion.h2
-          variants={fadeUp(0.04)}
+          variants={revealVariants(0.12)}
           initial="hidden"
-          animate={inView ? "visible" : "hidden"}
+          whileInView="visible"
+          viewport={{ once: true, margin: "-6%" }}
           style={{
             fontFamily: "'Sora',sans-serif",
             fontSize: "clamp(28px,5vw,58px)",
@@ -2735,20 +2999,23 @@ const Contact = () => {
             lineHeight: 1.05,
             color: C.text,
             marginBottom: "20px",
+            willChange: "transform, opacity",
           }}
         >
           Open to Design Engineer and Creative Frontend roles.
         </motion.h2>
 
         <motion.p
-          variants={fadeUp(0.08)}
+          variants={revealVariants(0.24)}
           initial="hidden"
-          animate={inView ? "visible" : "hidden"}
+          whileInView="visible"
+          viewport={{ once: true, margin: "-6%" }}
           style={{
             fontSize: "17px",
             lineHeight: 1.8,
             color: C.textSub,
             marginBottom: "44px",
+            willChange: "transform, opacity",
           }}
         >
           Building products where motion, craft, and interaction design matter —
