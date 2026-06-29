@@ -4,8 +4,8 @@ import { loadSlim } from "@tsparticles/slim";
 import { loadTextShape } from "@tsparticles/shape-text";
 
 const CODE_GLYPHS = [
-  "0",
-  "1",
+  "[0,1]",
+  "<=()",
   "<>",
   "{}",
   "//",

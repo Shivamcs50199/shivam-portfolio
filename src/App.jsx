@@ -70,7 +70,7 @@ const GlobalStyles = () => (
       .section-pad { padding: 80px 32px !important; }
       .hero-pad    { padding: 100px 32px 60px !important; }
       .zinc-phone-col { justify-content: center !important; }
-.zinc-left-col  { margin-left: auto !important; margin-right: auto !important; }
+      .zinc-left-col  { margin-left: auto !important; margin-right: auto !important; }
       .stats-row { gap: 28px !important; }
       .contact-footer { flex-direction: column !important; align-items: flex-start !important; }
       .resume-row { flex-direction: column !important; gap: 24px !important; align-items: flex-start !important; }
@@ -1040,12 +1040,7 @@ const ZincSection = () => {
                 textAlign: "center",
               }}
             >
-              ZINC started with a problem I was facing myself, forgotten
-              subscriptions quietly taking money every month. After talking to
-              people around me, I realized it was more common than I thought. So
-              I built ZINC. From product thinking and UX to motion systems and
-              React Native development, I designed and built the entire
-              experience from scratch.
+              A subscription tracking app built from scratch
             </p>
 
             <div
@@ -1063,8 +1058,8 @@ const ZincSection = () => {
                 "React",
                 "TypeScript",
                 "Reanimated 3",
-                "Lottie",
-                "EAS Build",
+                "Product Design",
+                "UX Strategy",
                 "Firebase",
               ].map((t) => (
                 <Chip key={t}>{t}</Chip>
@@ -1080,7 +1075,7 @@ const ZincSection = () => {
                 textAlign: "center",
               }}
             >
-              Preview a screen:
+              Explore the Experience:
             </p>
 
             <div
@@ -1122,7 +1117,6 @@ const ZincSection = () => {
               </motion.p>
             </AnimatePresence>
 
-            {/* ── Engineering proof strip ── */}
             <EngineeringStrip inView={inView} />
           </motion.div>
 
@@ -1271,11 +1265,8 @@ const OnboardingSection = () => {
                 textAlign: "center",
               }}
             >
-              The onboarding was designed to build understanding before trust. I
-              built a custom splash screen that introduces the product while key
-              resources load in the background, then used motion and progressive
-              disclosure to guide users through their first experience with
-              minimal friction.
+              A motion driven onboarding flow designed to build trust and guide
+              users through their first experience with minimal friction.
             </p>
 
             <div
@@ -1308,7 +1299,7 @@ const OnboardingSection = () => {
                 textAlign: "center",
               }}
             >
-              Preview a step:
+              Explore the flow:
             </p>
 
             <div
@@ -1404,15 +1395,34 @@ const ZincDesignSystemSection = () => {
       className="section-pad"
       style={{
         padding: "120px 48px",
-        background: C.surface,
+        background: "transparent",
         borderTop: `1px solid ${C.border}`,
+        position: "relative",
       }}
     >
+      {/* Ambient scrim — particle glyphs bleed through as subtle depth */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background: "rgba(9,9,11,0.65)",
+          backdropFilter: "blur(2px)",
+          WebkitBackdropFilter: "blur(2px)",
+          pointerEvents: "none",
+          zIndex: 0,
+        }}
+      />
+
       <motion.div
         variants={fadeUp(0)}
         initial="hidden"
         animate={inView ? "visible" : "hidden"}
-        style={{ textAlign: "center", marginBottom: "48px" }}
+        style={{
+          textAlign: "center",
+          marginBottom: "48px",
+          position: "relative",
+          zIndex: 1,
+        }}
       >
         <h2
           style={{
@@ -1440,6 +1450,7 @@ const ZincDesignSystemSection = () => {
           border: `1px solid ${C.border}`,
           background: "#000",
           position: "relative",
+          zIndex: 1,
         }}
       >
         {!error ? (
@@ -1526,15 +1537,34 @@ const MotionSystemSection = () => {
       className="section-pad"
       style={{
         padding: "120px 48px",
-        background: C.bg,
+        background: "transparent",
         borderTop: `1px solid ${C.border}`,
+        position: "relative",
       }}
     >
+      {/* Ambient scrim — particle glyphs bleed through as subtle depth */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background: "rgba(9,9,11,0.85)",
+          backdropFilter: "blur(2px)",
+          WebkitBackdropFilter: "blur(2px)",
+          pointerEvents: "none",
+          zIndex: 0,
+        }}
+      />
+
       <motion.div
         variants={fadeUp(0)}
         initial="hidden"
         animate={inView ? "visible" : "hidden"}
-        style={{ textAlign: "center", marginBottom: "48px" }}
+        style={{
+          textAlign: "center",
+          marginBottom: "48px",
+          position: "relative",
+          zIndex: 1,
+        }}
       >
         <h2
           style={{
@@ -1562,6 +1592,7 @@ const MotionSystemSection = () => {
           border: `1px solid ${C.border}`,
           background: "#000",
           position: "relative",
+          zIndex: 1,
         }}
       >
         {!error ? (
@@ -1770,10 +1801,10 @@ const SecondSection = () => {
               }}
             >
               {[
-                "Reanimated 3",
-                "Firebase Auth",
-                "OTP Verification",
-                "Lottie",
+                "Product Thinking",
+                "UX Strategy",
+                "Typescript",
+                "Reanimated",
                 "React Native",
               ].map((t) => (
                 <Chip key={t}>{t}</Chip>
@@ -2592,9 +2623,8 @@ const About = () => {
               built.
             </h2>
             {[
-              "7 years as a motion designer taught me that the best interfaces feel inevitable — not designed. Every transition is a UX decision, not a visual one. I'm now coding what I used to hand off.",
-              "I care about the 60ms between tap and response. The spring physics on a modal dismiss. The count-up animation that makes a number feel real. These are engineering problems that look like design problems.",
-              "Targeting Design Engineer and Creative Frontend roles at companies where craft is a product differentiator.",
+              "7 years across UI design, motion, and digital products taught me that the best interfaces feel inevitable—not designed. Today, I'm building the products I once handed off with React Native.",
+              "I care about the details where design meets engineering—motion, interaction, and performance.",
             ].map((p, i) => (
               <p
                 key={i}
