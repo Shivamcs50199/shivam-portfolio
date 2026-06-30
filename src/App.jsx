@@ -1765,6 +1765,195 @@ const MotionSystemSection = () => {
   );
 };
 
+/* ═══ PLAYER JOURNEY VISUALIZER SECTION ═══ */
+const PlayerJourneySection = () => {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-8%" });
+  const vRef = useRef(null);
+  const [error, setError] = useState(false);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const el = vRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.play().catch(() => {});
+        } else if (!el.paused) {
+          el.pause();
+        }
+      },
+      { threshold: 0.1 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <section
+      id="player-journey"
+      ref={ref}
+      className="section-pad"
+      style={{
+        padding: "120px 48px",
+        background: C.bg,
+        borderTop: `1px solid ${C.border}`,
+        position: "relative",
+      }}
+    >
+      <motion.div
+        variants={fadeUp(0)}
+        initial="hidden"
+        animate={inView ? "visible" : "hidden"}
+        style={{
+          textAlign: "center",
+          marginBottom: "48px",
+          position: "relative",
+          zIndex: 1,
+        }}
+      >
+        <motion.div
+          variants={revealVariants(0)}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-6%" }}
+          style={{ willChange: "transform, opacity" }}
+        >
+          <SectionLabel style={{ textAlign: "center" }}>
+            Gameplay Analytics Tool
+          </SectionLabel>
+        </motion.div>
+
+        <motion.h2
+          variants={revealVariants(0.12)}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-6%" }}
+          style={{
+            fontFamily: "'Sora',sans-serif",
+            fontSize: "clamp(28px,5vw,56px)",
+            fontWeight: 600,
+            letterSpacing: "-0.04em",
+            lineHeight: 1.1,
+            color: C.text,
+            willChange: "transform, opacity",
+          }}
+        >
+          Player Journey Visualizer
+        </motion.h2>
+
+        <motion.p
+          variants={revealVariants(0.24)}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-6%" }}
+          style={{
+            fontSize: "17px",
+            lineHeight: 1.8,
+            color: C.textSub,
+            maxWidth: "560px",
+            margin: "20px auto 0",
+            willChange: "transform, opacity",
+          }}
+        >
+          Built from raw gameplay telemetry into a desktop analytics tool
+          featuring replay, heatmaps, player journey visualization, and
+          interactive event analysis.
+        </motion.p>
+
+        <motion.div
+          variants={fadeUp(0.32)}
+          initial="hidden"
+          animate={inView ? "visible" : "hidden"}
+          className="chip-row"
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "8px",
+            justifyContent: "center",
+            marginTop: "28px",
+          }}
+        >
+          {[
+            "React",
+            "TypeScript",
+            "Vite",
+            "Tailwind CSS",
+            "HTML5 Canvas",
+            "DuckDB WASM",
+          ].map((t) => (
+            <Chip key={t}>{t}</Chip>
+          ))}
+        </motion.div>
+      </motion.div>
+
+      <motion.div
+        variants={fadeUp(0.08)}
+        initial="hidden"
+        animate={inView ? "visible" : "hidden"}
+        style={{
+          maxWidth: "760px",
+          margin: "0 auto",
+          borderRadius: "16px",
+          overflow: "hidden",
+          border: `1px solid ${C.border}`,
+          background: "#000",
+          position: "relative",
+          zIndex: 1,
+        }}
+      >
+        {!error ? (
+          <video
+            ref={vRef}
+            src="/videos/demo.mp4"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            onCanPlay={() => setReady(true)}
+            onError={() => setError(true)}
+            style={{
+              width: "100%",
+              height: "auto",
+              display: "block",
+              objectFit: "contain",
+              opacity: ready ? 1 : 0,
+              transition: "opacity 0.4s",
+            }}
+          />
+        ) : (
+          <div
+            style={{
+              minHeight: "320px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "8px",
+              color: C.textMeta,
+            }}
+          >
+            <span style={{ fontSize: "24px", opacity: 0.3 }}>▶</span>
+            <span
+              style={{
+                fontFamily: "'DM Mono',monospace",
+                fontSize: "11px",
+                textAlign: "center",
+                padding: "0 16px",
+              }}
+            >
+              Could not load /videos/demo.mp4 — check filename casing, folder
+              location (public/videos/), and that the format is H.264 MP4.
+            </span>
+          </div>
+        )}
+      </motion.div>
+    </section>
+  );
+};
+
 /* ═══ GLUATTA PHONE ═══ */
 const GluattaPhone = () => {
   const videoRef = useRef(null);
@@ -3120,6 +3309,7 @@ export default function App() {
         <OnboardingSection />
         <ZincDesignSystemSection />
         <MotionSystemSection />
+        <PlayerJourneySection />
         <SecondSection />
         <WhyGluattaSection />
         <GluattaVideoSection />
