@@ -1769,26 +1769,6 @@ const MotionSystemSection = () => {
 const PlayerJourneySection = () => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-8%" });
-  const vRef = useRef(null);
-  const [error, setError] = useState(false);
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    const el = vRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          el.play().catch(() => {});
-        } else if (!el.paused) {
-          el.pause();
-        }
-      },
-      { threshold: 0.1 },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
 
   return (
     <section
@@ -1903,52 +1883,24 @@ const PlayerJourneySection = () => {
           zIndex: 1,
         }}
       >
-        {!error ? (
-          <video
-            ref={vRef}
-            src="/videos/demo.mp4"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            onCanPlay={() => setReady(true)}
-            onError={() => setError(true)}
+        {/* 16:9 responsive YouTube embed */}
+        <div style={{ position: "relative", paddingTop: "56.25%" }}>
+          <iframe
+            src="https://www.youtube.com/embed/uKyNtsPBx4w?si=swoVI47TocPFJU1U"
+            title="Player Journey Visualizer"
+            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
             style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
               width: "100%",
-              height: "auto",
+              height: "100%",
+              border: "none",
               display: "block",
-              objectFit: "contain",
-              opacity: ready ? 1 : 0,
-              transition: "opacity 0.4s",
             }}
           />
-        ) : (
-          <div
-            style={{
-              minHeight: "320px",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "8px",
-              color: C.textMeta,
-            }}
-          >
-            <span style={{ fontSize: "24px", opacity: 0.3 }}>▶</span>
-            <span
-              style={{
-                fontFamily: "'DM Mono',monospace",
-                fontSize: "11px",
-                textAlign: "center",
-                padding: "0 16px",
-              }}
-            >
-              Could not load /videos/demo.mp4 — check filename casing, folder
-              location (public/videos/), and that the format is H.264 MP4.
-            </span>
-          </div>
-        )}
+        </div>
       </motion.div>
     </section>
   );
