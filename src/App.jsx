@@ -1782,6 +1782,7 @@ const PlayerJourneySection = () => {
         background: C.bg,
         borderTop: `1px solid ${C.border}`,
         position: "relative",
+        marginBottom: -12,
       }}
     >
       <motion.div
@@ -1869,7 +1870,13 @@ const PlayerJourneySection = () => {
         </motion.div>
       </motion.div>
 
-      <div style={{ textAlign: "center", marginBottom: "32px" }}>
+      <div
+        style={{
+          textAlign: "center",
+          marginBottom: "32px",
+          marginTop: "-13px",
+        }}
+      >
         <BtnOutline href={LIVE_DEMO_URL} target="_blank" download={undefined}>
           🌐 Live Demo
         </BtnOutline>
