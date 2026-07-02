@@ -1766,6 +1766,8 @@ const MotionSystemSection = () => {
 };
 
 /* ═══ PLAYER JOURNEY VISUALIZER SECTION ═══ */
+const LIVE_DEMO_URL = "https://lila-player-visualizer-chi.vercel.app/"; // ← paste your deployment URL here
+
 const PlayerJourneySection = () => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-8%" });
@@ -1837,9 +1839,8 @@ const PlayerJourneySection = () => {
             willChange: "transform, opacity",
           }}
         >
-          Built from raw gameplay telemetry into a desktop analytics tool
-          featuring replay, heatmaps, player journey visualization, and
-          interactive event analysis.
+          Built from scratch and deployed using gameplay telemetry with replay,
+          heatmaps, player journey visualization, and event analysis.
         </motion.p>
 
         <motion.div
@@ -1868,6 +1869,12 @@ const PlayerJourneySection = () => {
         </motion.div>
       </motion.div>
 
+      <div style={{ textAlign: "center", marginBottom: "32px" }}>
+        <BtnOutline href={LIVE_DEMO_URL} target="_blank" download={undefined}>
+          🌐 Live Demo
+        </BtnOutline>
+      </div>
+
       <motion.div
         variants={fadeUp(0.08)}
         initial="hidden"
@@ -1886,7 +1893,7 @@ const PlayerJourneySection = () => {
         {/* 16:9 responsive YouTube embed */}
         <div style={{ position: "relative", paddingTop: "56.25%" }}>
           <iframe
-            src="https://www.youtube.com/embed/uKyNtsPBx4w?si=swoVI47TocPFJU1U"
+            src="https://www.youtube.com/embed/uKyNtsPBx4w"
             title="Player Journey Visualizer"
             allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowFullScreen
