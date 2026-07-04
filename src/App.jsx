@@ -1513,14 +1513,12 @@ const ZincDesignSystemSection = () => {
         style={{
           position: "absolute",
           inset: 0,
-          background: "rgba(9,9,11,0.55)",
-          backdropFilter: "blur(.5px)",
-          WebkitBackdropFilter: "blur(2px)",
+          background: "rgba(9,9,11,0.24)",
+
           pointerEvents: "none",
           zIndex: 0,
         }}
       />
-
       <motion.div
         variants={fadeUp(0)}
         initial="hidden"
@@ -1660,9 +1658,8 @@ const MotionSystemSection = () => {
         style={{
           position: "absolute",
           inset: 0,
-          background: "rgba(9,9,11,0.55)",
-          backdropFilter: "blur(.5px)",
-          WebkitBackdropFilter: "blur(2px)",
+          background: "rgba(9,9,11,0.24)",
+
           pointerEvents: "none",
           zIndex: 0,
         }}
@@ -2295,8 +2292,9 @@ const GluattaVideoSection = () => {
       className="section-pad"
       style={{
         padding: "120px 48px",
-        background: C.bg,
+        background: "transparent",
         borderTop: `1px solid ${C.border}`,
+        position: "relative",
       }}
     >
       <motion.div
@@ -2967,146 +2965,160 @@ const About = () => {
       className="section-pad"
       style={{
         padding: "120px 48px",
-        background: C.surface,
+        background: "transparent",
         borderTop: `1px solid ${C.border}`,
+        position: "relative",
       }}
     >
-      <div style={{ maxWidth: "1160px", margin: "0 auto" }}>
-        {/* Top-level section label */}
-        <motion.div
-          variants={revealVariants(0)}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-6%" }}
-          style={{ willChange: "transform, opacity" }}
-        >
-          <SectionLabel>About</SectionLabel>
-        </motion.div>
-
-        <div
-          className="two-col"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "72px",
-          }}
-        >
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background: "rgba(9,9,11,0.55)",
+          backdropFilter: "blur(.5px)",
+          WebkitBackdropFilter: "blur(2px)",
+          pointerEvents: "none",
+          zIndex: 0,
+        }}
+      />
+      <div style={{ position: "relative", zIndex: 1 }}>
+        <div style={{ maxWidth: "1160px", margin: "0 auto" }}>
+          {/* Top-level section label */}
           <motion.div
-            variants={fadeUp(0)}
+            variants={revealVariants(0)}
             initial="hidden"
-            animate={inView ? "visible" : "hidden"}
+            whileInView="visible"
+            viewport={{ once: true, margin: "-6%" }}
+            style={{ willChange: "transform, opacity" }}
           >
-            <motion.h2
-              variants={revealVariants(0.12)}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-6%" }}
-              style={{
-                fontFamily: "'Sora',sans-serif",
-                fontSize: "clamp(18px,2.6vw,32px)",
-                fontWeight: 600,
-                letterSpacing: "-0.03em",
-                lineHeight: 1.25,
-                color: C.text,
-                marginBottom: "28px",
-                willChange: "transform, opacity",
-              }}
-            >
-              The gap between design and engineering is where good products are
-              built.
-            </motion.h2>
-
-            {/* First paragraph — third stagger step */}
-            <motion.p
-              variants={revealVariants(0.24)}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-6%" }}
-              style={{
-                fontSize: "15px",
-                lineHeight: 1.85,
-                color: C.textSub,
-                marginBottom: "16px",
-                willChange: "transform, opacity",
-              }}
-            >
-              7 years across UI design, motion, and digital products taught me
-              that the best interfaces feel inevitable—not designed. Today, I'm
-              building the products I once handed off with React Native.
-            </motion.p>
-
-            {/* Second paragraph — not scroll-revealed per spec */}
-            <p
-              style={{
-                fontSize: "15px",
-                lineHeight: 1.85,
-                color: C.textSub,
-                marginBottom: "16px",
-              }}
-            >
-              I care about the details where design meets engineering—motion,
-              interaction, and performance.
-            </p>
+            <SectionLabel>About</SectionLabel>
           </motion.div>
 
-          <motion.div
-            variants={fadeUp(0.08)}
-            initial="hidden"
-            animate={inView ? "visible" : "hidden"}
+          <div
+            className="two-col"
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "72px",
+            }}
           >
-            <div className="about-details">
-              {[
-                ["Currently Building", "Gluata — React Native App"],
-                ["Role", "Design Engineer · Creative Frontend"],
-                [
-                  "Experience",
-                  "Clevertize · PlaySimple Mobile Games · MPS Limited",
-                ],
-                ["Based", "Bangalore, India"],
-                ["Open To", "Full-time · Contract"],
-                ["Stack", "React Native · React · TypeScript · Reanimated 3"],
-                [
-                  "Design Tools",
-                  "Figma · After Effects · Photoshop · Illustrator",
-                ],
-              ].map(([label, value]) => (
-                <div
-                  key={label}
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    padding: "16px 0",
-                    borderBottom: `1px solid ${C.border}`,
-                    gap: "20px",
-                    flexWrap: "wrap",
-                    alignItems: "baseline",
-                  }}
-                >
-                  <span
+            <motion.div
+              variants={fadeUp(0)}
+              initial="hidden"
+              animate={inView ? "visible" : "hidden"}
+            >
+              <motion.h2
+                variants={revealVariants(0.12)}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-6%" }}
+                style={{
+                  fontFamily: "'Sora',sans-serif",
+                  fontSize: "clamp(18px,2.6vw,32px)",
+                  fontWeight: 600,
+                  letterSpacing: "-0.03em",
+                  lineHeight: 1.25,
+                  color: C.text,
+                  marginBottom: "28px",
+                  willChange: "transform, opacity",
+                }}
+              >
+                The gap between design and engineering is where good products
+                are built.
+              </motion.h2>
+
+              {/* First paragraph — third stagger step */}
+              <motion.p
+                variants={revealVariants(0.24)}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-6%" }}
+                style={{
+                  fontSize: "15px",
+                  lineHeight: 1.85,
+                  color: C.textSub,
+                  marginBottom: "16px",
+                  willChange: "transform, opacity",
+                }}
+              >
+                7 years across UI design, motion, and digital products taught me
+                that the best interfaces feel inevitable—not designed. Today,
+                I'm building the products I once handed off with React Native.
+              </motion.p>
+
+              {/* Second paragraph — not scroll-revealed per spec */}
+              <p
+                style={{
+                  fontSize: "15px",
+                  lineHeight: 1.85,
+                  color: C.textSub,
+                  marginBottom: "16px",
+                }}
+              >
+                I care about the details where design meets engineering—motion,
+                interaction, and performance.
+              </p>
+            </motion.div>
+
+            <motion.div
+              variants={fadeUp(0.08)}
+              initial="hidden"
+              animate={inView ? "visible" : "hidden"}
+            >
+              <div className="about-details">
+                {[
+                  ["Currently Building", "Gluata — React Native App"],
+                  ["Role", "Design Engineer · Creative Frontend"],
+                  [
+                    "Experience",
+                    "Clevertize · PlaySimple Mobile Games · MPS Limited",
+                  ],
+                  ["Based", "Bangalore, India"],
+                  ["Open To", "Full-time · Contract"],
+                  ["Stack", "React Native · React · TypeScript · Reanimated 3"],
+                  [
+                    "Design Tools",
+                    "Figma · After Effects · Photoshop · Illustrator",
+                  ],
+                ].map(([label, value]) => (
+                  <div
+                    key={label}
                     style={{
-                      fontFamily: "'DM Mono',monospace",
-                      fontSize: "11px",
-                      color: C.textMeta,
-                      letterSpacing: "0.08em",
-                      textTransform: "uppercase",
-                      flexShrink: 0,
+                      display: "flex",
+                      justifyContent: "space-between",
+                      padding: "16px 0",
+                      borderBottom: `1px solid ${C.border}`,
+                      gap: "20px",
+                      flexWrap: "wrap",
+                      alignItems: "baseline",
                     }}
                   >
-                    {label}
-                  </span>
-                  <span
-                    style={{
-                      fontSize: "14px",
-                      color: C.textSub,
-                      textAlign: "right",
-                    }}
-                  >
-                    {value}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </motion.div>
+                    <span
+                      style={{
+                        fontFamily: "'DM Mono',monospace",
+                        fontSize: "11px",
+                        color: C.textMeta,
+                        letterSpacing: "0.08em",
+                        textTransform: "uppercase",
+                        flexShrink: 0,
+                      }}
+                    >
+                      {label}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: "14px",
+                        color: C.textSub,
+                        textAlign: "right",
+                      }}
+                    >
+                      {value}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
         </div>
       </div>
     </section>
