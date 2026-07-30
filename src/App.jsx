@@ -55,6 +55,8 @@ const Reveal = ({ children, delay = 0, style, className }) => (
 );
 
 const RESUME_PATH = "/resume/Shivam_Kumar_Resume.pdf";
+const PLAY_STORE_URL =
+  "https://play.google.com/store/apps/details?id=com.shivam1084.zinc&hl=en_IN";
 
 const GlobalStyles = () => (
   <style>{`
@@ -241,6 +243,78 @@ const BtnOutline = ({ children, href, onClick, target, download, style }) => {
     <button onClick={onClick} {...p}>
       {children}
     </button>
+  );
+};
+
+/* ═══ GOOGLE PLAY: pill (hero badge row) ═══ */
+const GooglePlayPill = () => {
+  const [hov, setHov] = useState(false);
+  return (
+    <a
+      href={PLAY_STORE_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: "7px",
+        fontFamily: "'Inter',sans-serif",
+        fontSize: "13px",
+        color: hov ? C.text : C.textSub,
+        border: `1px solid ${hov ? C.borderHi : C.border}`,
+        borderRadius: "999px",
+        padding: "6px 14px",
+        transition: "all 0.2s",
+        whiteSpace: "nowrap",
+      }}
+    >
+      <img
+        src="/icons/google-play-icon.png"
+        alt=""
+        style={{ width: "42px", height: "42px", flexShrink: 0 }}
+      />
+      Published on Google Play
+    </a>
+  );
+};
+
+/* ═══ GOOGLE PLAY: button (matches BtnOutline styling) ═══ */
+const BtnPlayStore = ({ href, style }) => {
+  const [hov, setHov] = useState(false);
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: "9px",
+        fontFamily: "'Inter',sans-serif",
+        fontSize: "15px",
+        fontWeight: 400,
+        padding: "12px 24px",
+        borderRadius: "8px",
+        border: `1.5px solid ${hov ? C.borderHi : C.border}`,
+        color: hov ? C.text : C.textSub,
+        background: "transparent",
+        transition: "all 0.2s",
+        whiteSpace: "nowrap",
+        ...style,
+      }}
+    >
+      <img
+        src="/icons/google-play-icon.png"
+        alt=""
+        style={{ width: "30px", height: "30px" }}
+      />
+      View on Google Play
+    </a>
   );
 };
 
@@ -587,7 +661,7 @@ const Hero = () => {
             display: "flex",
             alignItems: "center",
             gap: "10px",
-            marginBottom: "40px",
+            marginBottom: "16px",
           }}
         >
           <span
@@ -609,6 +683,16 @@ const Hero = () => {
           >
             Available for full-time roles · Bangalore
           </span>
+        </motion.div>
+
+        {/* Google Play pill — sits under the availability badge */}
+        <motion.div
+          variants={fadeUp(0.04)}
+          initial="hidden"
+          animate={inView ? "visible" : "hidden"}
+          style={{ marginBottom: "40px" }}
+        >
+          <GooglePlayPill />
         </motion.div>
 
         {/* "I design and build" — hero heading line 1 */}
@@ -699,6 +783,22 @@ const Hero = () => {
           <BtnOutline href="#contact">Get in Touch</BtnOutline>
         </motion.div>
 
+        {/* Google Play button — directly below the View ZINC / Get in Touch row */}
+        <motion.div
+          variants={fadeUp(0.24)}
+          initial="hidden"
+          animate={inView ? "visible" : "hidden"}
+          className="btn-row"
+          style={{
+            display: "flex",
+            gap: "12px",
+            flexWrap: "wrap",
+            marginBottom: "12px",
+          }}
+        >
+          <BtnPlayStore href={PLAY_STORE_URL} />
+        </motion.div>
+
         <motion.div
           variants={fadeUp(0.26)}
           initial="hidden"
@@ -727,8 +827,8 @@ const Hero = () => {
           }}
         >
           {[
-            ["7 yrs", "Motion Design"],
-            ["React Native", "Primary Stack"],
+            ["7 yrs", "PRODUCT DESIGN . MOTION"],
+            ["PRODUCT ENGINEERING", "Primary Stack"],
             ["Bangalore", "India"],
           ].map(([v, l]) => (
             <div key={l}>
